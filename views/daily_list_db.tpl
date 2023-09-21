@@ -90,7 +90,7 @@
 
 <ul class="footer-links">
   <li><a href="/">home</a></li>
-  <li><a href="/completed_list">completed</a></li>
+  <li><a href="/completed-list">completed</a></li>
   <li><a href="/regenerate">regenerate list</a></li>
 </ul>
 

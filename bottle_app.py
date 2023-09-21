@@ -34,7 +34,7 @@ def get_finish(id):
     connection.commit()
     redirect('/list')
 
-@route("/completed_list")
+@route("/completed-list")
 def get_complete():
     cursor = connection.cursor()
     rows = cursor.execute("select id, task, complete from list")
@@ -48,10 +48,14 @@ def get_complete():
 
 
 
-@route("/regenerate")
+@route('/regenerate')
 def get_regenerate():
     setup_table()
     return redirect('/list')
+
+@route('/shared-expenses')
+def get_shared_expenses():
+    redirect('/')
 
 application = default_app()
 

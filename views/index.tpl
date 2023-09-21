@@ -27,8 +27,8 @@
   </style>
 
 <body>
-<h1>index</h1>
+<h1>home</h1>
 <h4><a href="/list">daily list</a><br></h4>
-<h4><a href="/legacy">legacy list</a></h4>
+<h4><a href="/shared-expenses">shared-expenses</a></h4>
 </body>
 </html>
