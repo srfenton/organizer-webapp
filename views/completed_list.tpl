@@ -18,25 +18,6 @@
       padding-top: 45px;
     }
 
-    .button {
-      background-color: #fd5844; /* electric orange */
-      border: none;
-      color: white;
-      box-sizing: border-box;
-      padding: 7px 16px;
-      text-align: center;
-      text-decoration: none;
-      display: inline-block;
-      font-size: 16px;
-      margin: 4px 2px;
-      cursor: pointer;
-      -webkit-transition-duration: 0.4s; /* Safari */
-      transition-duration: 0.4s;
-    }
-
-    .button2:hover {
-      box-shadow: 0 12px 16px 0 rgba(0,0,0,0.24),0 17px 50px 0 rgba(0,0,0,0.19);
-    }
 
     table {
       margin: 0 auto 45px;
@@ -87,7 +68,7 @@
 
 <ul class="footer-links">
   <li><a href="/">home</a></li>
-  <li><a href="/completed_list">completed</a></li>
+  <li><a href="/list">daily list</a></li>
   <li><a href="/regenerate">regenerate list</a></li>
 </ul>
 
