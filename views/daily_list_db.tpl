@@ -12,7 +12,7 @@
       text-decoration: none;
     }
     a:visited {
-    color: inherit;
+    color: inherited;
     }
 
     body {
@@ -28,6 +28,7 @@
       text-align: center;
       text-decoration: none;
       display: inline-block;
+      visited: inherited;
       font-size: 16px;
       margin: 4px 2px;
       cursor: pointer;
@@ -38,7 +39,9 @@
     .button2:hover {
       box-shadow: 0 12px 16px 0 rgba(0,0,0,0.24),0 17px 50px 0 rgba(0,0,0,0.19);
     }
-
+    .button_text {
+    color: white
+    }
     table {
       margin: 0 auto 45px;
     }
@@ -82,7 +85,7 @@
   % for item in task_list:
     <tr>
       <td>{{str(item['task'])}}</td>
-      <td><button class="button button2"><a href="/complete/{{str(item['id'])}}">complete task</a></button></td>
+      <td><button class="button button2"><a class=button_text href="/complete/{{str(item['id'])}}">complete task</a></button></td>
     </tr>
 
   % end
