@@ -3,9 +3,10 @@
 
     a {
       text-decoration: none;
+      color:black;
     }
     a:visited {
-    color: inherit;
+    color: inherited;
     }
 
     body {
