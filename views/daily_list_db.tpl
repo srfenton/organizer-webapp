@@ -12,7 +12,7 @@
       text-decoration: none;
     }
     a:visited {
-    color: inherited;
+    color: black;
     }
 
     body {
