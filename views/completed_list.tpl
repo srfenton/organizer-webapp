@@ -1,3 +1,4 @@
+<!DOCTYPE html>
 <html>
 <head>
 
@@ -7,11 +8,9 @@
 
   <style>
 
-    a {
+    a, a:visited {
       text-decoration: none;
-    }
-    a:visited {
-    color: inherit;
+      color: black;
     }
 
     body {
@@ -48,19 +47,29 @@
       padding: 30px;
     }
 
-    .footer-links a {
+    .footer-links a, a:visited {
       color: black;
       text-decoration: none;
     }
+
+    .undo {
+    }
+
+    .undo a, a:visited {
+      color: #fd5844;
+    }
+
+
   </style>
 </head>
 <body>
-<h2>completed task list</h2>
+<h2>Completed Task List</h2>
 
 <table>
 % for item in completed_list:
   <tr>
     <td>{{str(item['task'])}}</td>
+    <td><a class="undo" href="/undo-complete/{{str(item['id'])}}">undo</a></td>
   </tr>
 
 % end

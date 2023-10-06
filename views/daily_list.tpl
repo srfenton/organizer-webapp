@@ -8,11 +8,10 @@
 
   <style>
 
-    a {
+
+    a, a:visited {
+      color: black;
       text-decoration: none;
-    }
-    a:visited {
-    color: black;
     }
 
     body {
@@ -42,9 +41,15 @@
     .button_text {
     color: white
     }
+
     table {
       margin: 0 auto 45px;
     }
+
+    .button_text a, a:visited{
+    color: white
+    }
+
 
     tr, td {
       border-collapse: collapse;
@@ -71,7 +76,7 @@
       padding: 30px;
     }
 
-    .footer-links a {
+    .footer-links a, .footer-links a:visited {
       color: black;
       text-decoration: none;
     }
@@ -79,13 +84,13 @@
 </head>
 <body>
 
-<h2>daily list</h2>
+<h2>Daily List</h2>
 
 <table>
   % for item in task_list:
     <tr>
       <td>{{str(item['task'])}}</td>
-      <td><button class="button button2"><a class=button_text href="/complete/{{str(item['id'])}}">complete task</a></button></td>
+      <td><button class="button button2"><a class=button_text href="/complete/{{str(item['id'])}}">complete</a></button></td>
     </tr>
 
   % end

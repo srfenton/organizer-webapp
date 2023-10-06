@@ -23,16 +23,25 @@ def get_list():
     for x in range(0,len(rows)):
         if rows[x]['complete']== False:
             uncompleted_list.append(rows[x])
-    return template("daily_list_db.tpl", name="sf", task_list=uncompleted_list)
+    return template("daily_list.tpl", name="sf", task_list=uncompleted_list)
 
 
 @route("/complete/<id>")
-def get_finish(id):
+def get_complete_task(id):
     cursor = connection.cursor()
     # cursor.execute(f"delete from list where id={id}")
     cursor.execute(f"update list set complete = true where id={id}")
     connection.commit()
     redirect('/list')
+
+
+@route("/undo-complete/<id>")
+def get_undo_complete_task(id):
+    cursor = connection.cursor()
+    # cursor.execute(f"delete from list where id={id}")
+    cursor.execute(f"update list set complete = false where id={id}")
+    connection.commit()
+    redirect('/completed-list')
 
 @route("/completed-list")
 def get_complete():

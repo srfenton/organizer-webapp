@@ -1,15 +1,15 @@
+<!DOCTYPE html>
 <html>
 <head>
-<style>
+
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link href='https://fonts.googleapis.com/css?family=Nunito Sans' rel='stylesheet'>
 
-   a {
+  <style>
+
+    a, a:visited {
+      color:black;
       text-decoration: none;
-      color: black;
-    }
-
-    a:visited {
-    color: black;
     }
 
     body {
@@ -22,18 +22,22 @@
       margin: 0 auto 45px
     }
 
-    h3 {
+    h4 {
       font-family: 'Nunito Sans';
       text-align: center;
-      margin: 0 auto 12px
+      margin: 0 auto 16px
     }
 
   </style>
 
-<body>
 </head>
+
+<body>
+
 <h1>home</h1>
-<h3><a href="/list">daily list</a><br></h3>
-<h3><a href="/shared-expenses">shared-expenses</a></h3>
+<h4><a href="/list">daily list</a><br></h4>
+<h4><a href="/shared-expenses">shared expenses</a></h4>
+
 </body>
+
 </html>
