@@ -80,27 +80,39 @@
       color: black;
       text-decoration: none;
     }
+
+
+    form {
+      margin: 0 auto 45px;
+      text-align: center;
+
   </style>
+
 </head>
 <body>
 
-<h2>Daily List</h2>
+<h2>Edit Daily List</h2>
 
 <table>
   % for item in task_list:
     <tr>
       <td>{{str(item['task'])}}</td>
-      <td><button class="button button2"><a class=button_text href="/complete/{{str(item['id'])}}">complete</a></button></td>
+      <td><button class="button button2"><a class=button_text href="/remove-task/{{str(item['id'])}}">remove</a></button></td>
     </tr>
 
   % end
 </table>
 
+<form action="/add-task" method="post">
+  <p><input name="new_task"/>
+ <button class="button button2" type="submit">add</button></p>
+</form>
+
 <ul class="footer-links">
   <li><a href="/">home</a></li>
   <li><a href="/completed-list">completed</a></li>
   <li><a href="/regenerate">regenerate list</a></li>
-  <li><a href="/edit-list">edit list</a></li>
+  <li><a href="/list">daily list</a></li>
 </ul>
 
 </body>

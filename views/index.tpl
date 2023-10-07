@@ -34,7 +34,7 @@
 
 <body>
 
-<h1>home</h1>
+<h1>Home</h1>
 <h4><a href="/list">daily list</a><br></h4>
 <h4><a href="/shared-expenses">shared expenses</a></h4>
 

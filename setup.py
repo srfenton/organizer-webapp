@@ -23,6 +23,20 @@ def setup_table():
     cursor.execute("insert into list (task, complete) values ('Water III', false)")
     cursor.execute("insert into list (task, complete) values ('Language Lesson', false)")
     cursor.execute("insert into list (task, complete) values ('Science Lesson', false)")
+    cursor.execute("insert into list (task, complete) values ('test item', false)")
+
+    # cursor.execute("create table list (id integer primary key, task text, date_completed test)")
+
+    # cursor.execute("insert into list (task) values ('Sunlight')")
+    # cursor.execute("insert into list (task) values ('Cold Shower'")
+    # cursor.execute("insert into list (task) values ('Exercise')")
+    # cursor.execute("insert into list (task) values ('Zazen')")
+    # cursor.execute("insert into list (task) values ('Hibiscus')")
+    # cursor.execute("insert into list (task) values ('Water I')")
+    # cursor.execute("insert into list (task) values ('Water II')")
+    # cursor.execute("insert into list (task) values ('Water III')")
+    # cursor.execute("insert into list (task) values ('Language Lesson')")
+    # cursor.execute("insert into list (task) values ('Science Lesson')")
 
     connection.commit()
     connection.close()

@@ -52,14 +52,6 @@
       text-decoration: none;
     }
 
-    .undo {
-    }
-
-    .undo a, a:visited {
-      color: #fd5844;
-    }
-
-
   </style>
 </head>
 <body>
