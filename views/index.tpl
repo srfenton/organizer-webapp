@@ -14,18 +14,52 @@
 
     body {
       padding-top: 45px;
+      text-align:center;
     }
 
     h1 {
       font-family: 'Nunito Sans';
       text-align: center;
-      margin: 0 auto 45px
+      margin: 0 auto 45px;
     }
 
     h4 {
       font-family: 'Nunito Sans';
       text-align: center;
-      margin: 0 auto 16px
+      margin: 0 auto 16px;
+    }
+
+    .button {
+          background-color: #fd5844; /* electric orange */
+          border: none;
+          color: white;
+          box-sizing: border-box;
+          padding: 7px 16px;
+          text-align: center;
+          text-decoration: none;
+          display: inline-block;
+          visited: inherited;
+          font-size: 16px;
+          margin: 4px 2px;
+          cursor: pointer;
+          -webkit-transition-duration: 0.4s; /* Safari */
+          transition-duration: 0.4s;
+        }
+
+    .button2:hover {
+      box-shadow: 0 12px 16px 0 rgba(0,0,0,0.24),0 17px 50px 0 rgba(0,0,0,0.19);
+    }
+
+    .button_text {
+    color: white;
+    }
+
+    .button_text a, a:visited{
+        color: white;
+
+    form {
+      margin: 0 auto 45px;
+      text-align: center;
     }
 
   </style>
@@ -36,7 +70,12 @@
 
 <h1>Home</h1>
 <h4><a href="/list">daily list</a><br></h4>
-<h4><a href="/shared-expenses">shared expenses</a></h4>
+
+<form action="/login" method="post">
+  <p>user id: <input name="user_id"/>
+ <button class="button button2" type="submit">login</button></p>
+</form>
+
 
 </body>
 

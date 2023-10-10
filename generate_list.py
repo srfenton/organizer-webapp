@@ -1,30 +1,21 @@
 import sqlite3
+from time import gmtime, strftime
 
 # DB-API spec for talking to relational databases in Python
+#iterate through the items in a table, which are user added tasks and add them into a table with today's date
+
 def generate_table():
-    connection = sqlite3.connect("daily_list.db")
+    connection = sqlite3.connect('daily_list.db')
 
     cursor = connection.cursor()
+    cursor.execute('select * from list;')
+    date = str(strftime("%Y %m %d"))
+    records = [row[0] for row in cursor.fetchall()]
 
-    try:
-        cursor.execute("drop table list")
-    except:
-        pass
-
-    cursor.execute("create table list (id integer primary key, task text, date_completed test)")
-
-    cursor.execute("insert into list (task) values ('Sunlight')")
-    cursor.execute("insert into list (task) values ('Cold Shower'")
-    cursor.execute("insert into list (task) values ('Exercise')")
-    cursor.execute("insert into list (task) values ('Zazen')")
-    cursor.execute("insert into list (task) values ('Hibiscus')")
-    cursor.execute("insert into list (task) values ('Water I')")
-    cursor.execute("insert into list (task) values ('Water II')")
-    cursor.execute("insert into list (task) values ('Water III')")
-    cursor.execute("insert into list (task) values ('Language Lesson')")
-    cursor.execute("insert into list (task) values ('Science Lesson')")
+    for x in records:
+        cursor.execute('insert into tasks (task, date_assigned, completion_status) values (?,?, false)', (x, date))
 
     connection.commit()
     connection.close()
 
-    print("done.")
+    print('done.')

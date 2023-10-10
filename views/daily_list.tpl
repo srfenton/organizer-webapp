@@ -87,20 +87,26 @@
 <h2>Daily List</h2>
 
 <table>
-  % for item in task_list:
+  % for item in uncompleted_task_list:
     <tr>
       <td>{{str(item['task'])}}</td>
-      <td><button class="button button2"><a class=button_text href="/complete/{{str(item['id'])}}">complete</a></button></td>
+      <td>
+        <form action="/complete" method="post">
+        <input name="user_id" type="hidden" value="{{ str(item['user_id']) }}"/>
+        <input name="id" type="hidden" value="{{ str(item['id']) }}"/>
+        <button class="button button2" type="submit">complete</button>
+      </form>
+      </td>
     </tr>
 
   % end
 </table>
 
 <ul class="footer-links">
-  <li><a href="/">home</a></li>
-  <li><a href="/completed-list">completed</a></li>
-  <li><a href="/regenerate">regenerate list</a></li>
-  <li><a href="/edit-list">edit list</a></li>
+  <li><a href="/">logout</a></li>
+  <li><a href="/completed-list/{{context['user_id']}}">completed</a></li>
+  <li><a href="/regenerate/{{context['user_id']}}">regenerate list</a></li>
+  <li><a href="/edit-list/{{context['user_id']}}">edit list</a></li>
 </ul>
 
 </body>

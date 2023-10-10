@@ -39,7 +39,7 @@
       box-shadow: 0 12px 16px 0 rgba(0,0,0,0.24),0 17px 50px 0 rgba(0,0,0,0.19);
     }
     .button_text {
-    color: white
+    color: white;
     }
 
     table {
@@ -47,7 +47,7 @@
     }
 
     .button_text a, a:visited{
-    color: white
+    color: white;
     }
 
 
@@ -97,22 +97,32 @@
   % for item in task_list:
     <tr>
       <td>{{str(item['task'])}}</td>
-      <td><button class="button button2"><a class=button_text href="/remove-task/{{str(item['id'])}}">remove</a></button></td>
+      <td>
+          <form action="/remove-task" method="post">
+            <p>
+              <input name="id" type="hidden" value="{{str(item['id'])}}"/>
+              <input name="user_id" type="hidden" value="{{str(item['user_id'])}}"/>
+              <button class="button button2" type="submit">remove</button>
+            </p>
+          </form>
     </tr>
 
   % end
 </table>
 
 <form action="/add-task" method="post">
-  <p><input name="new_task"/>
- <button class="button button2" type="submit">add</button></p>
+  <p>
+    <input name="new_task"/>
+    <input name="user_id" type="hidden" value="{{str(item['user_id'])}}"/>
+    <button class="button button2" type="submit">add</button>
+  </p>
 </form>
 
 <ul class="footer-links">
   <li><a href="/">home</a></li>
-  <li><a href="/completed-list">completed</a></li>
-  <li><a href="/regenerate">regenerate list</a></li>
-  <li><a href="/list">daily list</a></li>
+  <li><a href="/completed-list/{{context['user_id']}}">completed</a></li>
+  <li><a href="/regenerate/{{context['user_id']}}">regenerate list</a></li>
+  <li><a href="/list/{{context['user_id']}}">daily list</a></li>
 </ul>
 
 </body>

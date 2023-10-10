@@ -52,25 +52,48 @@
       text-decoration: none;
     }
 
+    .button {
+      background-color: transparent;
+      border: none;
+      cursor: pointer;
+      font-family: inherit;
+      font-size: inherit;
+      line-height: inherit;
+      margin: 0;
+      padding: 0;
+      text-decoration: none;
+    }
+
+.button:hover {
+  background-color: #ccc;
+}
+
   </style>
 </head>
 <body>
 <h2>Completed Task List</h2>
 
 <table>
-% for item in completed_list:
+% for item in completed_task_list:
   <tr>
     <td>{{str(item['task'])}}</td>
-    <td><a class="undo" href="/undo-complete/{{str(item['id'])}}">undo</a></td>
+    <td>
+      <form action="/undo-complete" method="post">
+        <input name="user_id" type="hidden" value="{{str(item['user_id'])}}"/>
+        <input name="id" type="hidden" value="{{str(item['id'])}}"/>
+        <button class="button" type="submit">undo</button>
+      </form>
+
+    </td>
   </tr>
 
 % end
 </table>
 
 <ul class="footer-links">
-  <li><a href="/">home</a></li>
-  <li><a href="/list">daily list</a></li>
-  <li><a href="/regenerate">regenerate list</a></li>
+  <li><a href="/">logout</a></li>
+  <li><a href="/list/{{context['user_id']}}">daily list</a></li>
+  <li><a href="/regenerate/{{context['user_id']}}">regenerate list</a></li>
 </ul>
 
 </body>
