@@ -1,5 +1,5 @@
 from bottle import default_app, route, get, post, request, redirect, template
-from setup import setup_table, generate_tasks
+from setup import setup_user, generate_tasks
 import sqlite3
 from time import gmtime, strftime
 
@@ -15,10 +15,17 @@ def get_login():
     user_id = request.forms.get("user_id")
     redirect(f'/list/{user_id}')
 
+# @post('/register')
+# def get_register():
+#     user_id = request.forms.get("user_id")
+#     cursor = connection.cursor()
+#     rows = cursor.execute("insert into users () values
+#     redirect(f'/list/{user_id}')
+
 
 @route('/list/<user_id>')
 def get_list(user_id):
-    date = str(strftime("%Y %m %d"))
+    date = str(strftime("%Y-%m-%d"))
     cursor = connection.cursor()
     rows = cursor.execute("select * from list where user_id = ?", (user_id,))
     rows = list(rows)
@@ -55,7 +62,7 @@ def get_undo_complete_task():
 
 @route("/completed-list/<user_id>")
 def get_complete(user_id):
-    date = str(strftime("%Y %m %d"))
+    date = str(strftime("%Y-%m-%d"))
     cursor = connection.cursor()
     rows = cursor.execute("select id, user_id, task, date_assigned, completion_status from tasks where user_id = ? and completion_status = true and date_assigned = ?", (user_id, date))
     rows = list(rows)
