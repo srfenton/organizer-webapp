@@ -1,6 +1,6 @@
 import sqlite3
-from time import gmtime, strftime
-
+from datetime import datetime
+import pytz
 
 connection = sqlite3.connect('daily_list.db')
 
@@ -45,6 +45,7 @@ def setup_sf(connection=None):
     cursor.execute("insert into list (task, user_id) values ('Water III', ?)", (user_id,))
     cursor.execute("insert into list (task, user_id) values ('Language Lesson', ?)", (user_id,))
     cursor.execute("insert into list (task, user_id) values ('Science Lesson', ?)", (user_id,))
+    cursor.execute("insert into list (task, user_id) values ('Zazen', ?)", (user_id,))
 
     connection.commit()
     print("done.")
@@ -68,7 +69,7 @@ def regenerate_tasks_table(connection=None):
 def generate_tasks(user_id, connection=None):
     if connection is None:
         connection = sqlite3.connect("daily_list.db")
-    date = str(strftime("%Y-%m-%d"))
+    date = datetime.now(tz=pytz.timezone('US/Pacific')).strftime("%Y-%m-%d")
     cursor = connection.cursor()
     cursor.execute('select id, user_id, task from list where user_id = ?;', (user_id,))
 

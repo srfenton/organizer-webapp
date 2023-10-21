@@ -1,7 +1,8 @@
 from bottle import default_app, route, get, post, request, redirect, template
 from setup import setup_user, generate_tasks
 import sqlite3
-from time import gmtime, strftime
+from datetime import datetime
+import pytz
 
 
 connection = sqlite3.connect("daily_list.db")
@@ -25,7 +26,7 @@ def get_login():
 
 @route('/list/<user_id>')
 def get_list(user_id):
-    date = str(strftime("%Y-%m-%d"))
+    date = datetime.now(tz=pytz.timezone('US/Pacific')).strftime("%Y-%m-%d")
     cursor = connection.cursor()
     rows = cursor.execute("select * from list where user_id = ?", (user_id,))
     rows = list(rows)
@@ -62,7 +63,7 @@ def get_undo_complete_task():
 
 @route("/completed-list/<user_id>")
 def get_complete(user_id):
-    date = str(strftime("%Y-%m-%d"))
+    date = datetime.now(tz=pytz.timezone('US/Pacific')).strftime("%Y-%m-%d")
     cursor = connection.cursor()
     rows = cursor.execute("select id, user_id, task, date_assigned, completion_status from tasks where user_id = ? and completion_status = true and date_assigned = ?", (user_id, date))
     rows = list(rows)
