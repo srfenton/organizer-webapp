@@ -65,7 +65,8 @@
     }
 
 .button:hover {
-  background-color: #ccc;
+  color: #fd5844;
+  background-color: transparent;
 }
 
   </style>
