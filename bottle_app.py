@@ -1,33 +1,58 @@
-from bottle import default_app, route, get, post, request, redirect, template
+from bottle import Bottle, default_app, route, get, post, request, redirect, template
 from setup import setup_user, generate_tasks
 import sqlite3
 from datetime import datetime
 import pytz
+from bottle_session import Session
+import redis
 
 
 connection = sqlite3.connect("daily_list.db")
 
+# app = Bottle()
+plugin = bottle_session.SessionPlugin(cookie_lifetime=600)
+app.install(plugin)
+session = Session(app)
+
 @route('/')
 def get_index():
-    return template("index.tpl")
+    return template('index.tpl')
 
 @post('/login')
 def get_login():
-    user_id = request.forms.get("user_id")
+    user_id = request.forms.get('user_id')
+    time_zone = request.forms.get('time_zone')
+    print(time_zone+"FINDMEHERE")
+    # session["user_id"] = user_id
+    # session["time_zone"] = time_zone
     redirect(f'/list/{user_id}')
 
-# @post('/register')
-# def get_register():
-#     user_id = request.forms.get("user_id")
-#     cursor = connection.cursor()
-#     rows = cursor.execute("insert into users () values
-#     redirect(f'/list/{user_id}')
+@route('/logout')
+def get_logout():
+
+    redirect('/')
+
+@route('/registration')
+def get_registration():
+    return template('registration')
+
+
+@post('/register')
+def post_register():
+    username = request.forms.get('username')
+    password = request.forms.get('password')
+    cursor = connection.cursor()
+    rows = cursor.execute('insert into users (username, password) values (?,?)', (username, password))
+    redirect(f'/list/{user_id}')
 
 
 @route('/list/<user_id>')
+# @route('/list/')
 def get_list(user_id):
+# def get_list():
     date = datetime.now(tz=pytz.timezone('US/Pacific')).strftime("%Y-%m-%d")
     cursor = connection.cursor()
+    # user_id = request.session.get("user_id")
     rows = cursor.execute("select * from list where user_id = ?", (user_id,))
     rows = list(rows)
     if len(rows) == 0:
@@ -88,7 +113,7 @@ def get_edit_list(user_id):
     return template("edit_list.tpl", name="sf", task_list=rows, context=context)
 
 @post('/remove-task')
-def get_remove_item():
+def post_remove_item():
     id = request.forms.get("id")
     user_id = request.forms.get("user_id")
     cursor = connection.cursor()

@@ -72,22 +72,15 @@
 
 <body>
 
-<h1>Home</h1>
+<h1>Register</h1>
 
-<script>
-  const time_zone = Intl.DateTimeFormat().resolvedOptions().timeZone;
-</script>
-
-<form action="/login" method="post">
-  <p>user id: <input name="user_id"/></p>
+<form action="/register" method="post">
   <p>username: <input name="username"/></p>
   <p>password: <input name="password"/></p>
-  <p><button class="button button2" type="submit">login</button></p>
-  <input name="time_zone" type="hidden" value = time_zone />
-
+  <p><button class="button button2" type="submit">register</button></p>
 </form>
 
-<a href='/registration'>register</a>
+<a href='/'>home</a>
 
 </body>
 

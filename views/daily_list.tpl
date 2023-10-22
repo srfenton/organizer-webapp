@@ -22,6 +22,7 @@
       background-color: #fd5844; /* electric orange */
       border: none;
       color: white;
+      font-family: 'Nunito Sans';
       box-sizing: border-box;
       padding: 7px 16px;
       text-align: center;
@@ -103,7 +104,7 @@
 </table>
 
 <ul class="footer-links">
-  <li><a href="/">logout</a></li>
+  <li><a href="/logout">logout</a></li>
   <li><a href="/completed-list/{{context['user_id']}}">completed</a></li>
   <li><a href="/regenerate/{{context['user_id']}}">regenerate list</a></li>
   <li><a href="/edit-list/{{context['user_id']}}">edit list</a></li>
