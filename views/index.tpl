@@ -78,6 +78,7 @@
   const time_zone = Intl.DateTimeFormat().resolvedOptions().timeZone;
 </script>
 
+
 <form action="/login" method="post">
   <p>user id: <input name="user_id"/></p>
   <p>username: <input name="username"/></p>

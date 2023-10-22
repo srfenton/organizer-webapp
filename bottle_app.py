@@ -1,18 +1,13 @@
 from bottle import Bottle, default_app, route, get, post, request, redirect, template
 from setup import setup_user, generate_tasks
+from password_manager import generate_password_hash
 import sqlite3
 from datetime import datetime
 import pytz
-from bottle_session import Session
-import redis
 
 
 connection = sqlite3.connect("daily_list.db")
 
-# app = Bottle()
-plugin = bottle_session.SessionPlugin(cookie_lifetime=600)
-app.install(plugin)
-session = Session(app)
 
 @route('/')
 def get_index():
@@ -21,10 +16,18 @@ def get_index():
 @post('/login')
 def get_login():
     user_id = request.forms.get('user_id')
+    username = request.forms.get('username')
+    password = generate_password_hash(request.forms.get('password'))
     time_zone = request.forms.get('time_zone')
-    print(time_zone+"FINDMEHERE")
-    # session["user_id"] = user_id
-    # session["time_zone"] = time_zone
+    cursor = connection.cursor()
+    login_query = list(cursor.execute('select id, password from users where username = ?', (username,)))
+    stored_password_hash = login_query[0][1]
+    user_id = login_query[0][0]
+    if password == stored_password_hash:
+        print('password check successful')
+
+    print(time_zone+'FINDMEHERE')
+
     redirect(f'/list/{user_id}')
 
 @route('/logout')
@@ -40,9 +43,13 @@ def get_registration():
 @post('/register')
 def post_register():
     username = request.forms.get('username')
-    password = request.forms.get('password')
+    password_hash = generate_password_hash(request.forms.get('password'))
     cursor = connection.cursor()
-    rows = cursor.execute('insert into users (username, password) values (?,?)', (username, password))
+    insert_user_record = cursor.execute('insert into users (username, password) values (?,?)', (username, password_hash))
+    connection.commit()
+    rows = list(cursor.execute('select id from users where username = ?', (username,)))
+    user_id= rows[0][0]
+    print(f"user id is {user_id} and is coming from the db")
     redirect(f'/list/{user_id}')
 
 
@@ -52,7 +59,6 @@ def get_list(user_id):
 # def get_list():
     date = datetime.now(tz=pytz.timezone('US/Pacific')).strftime("%Y-%m-%d")
     cursor = connection.cursor()
-    # user_id = request.session.get("user_id")
     rows = cursor.execute("select * from list where user_id = ?", (user_id,))
     rows = list(rows)
     if len(rows) == 0:
