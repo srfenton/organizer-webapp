@@ -1,4 +1,4 @@
-from bottle import Bottle, default_app, route, get, post, request, redirect, template
+from bottle import Bottle, default_app, route, get, post, request, redirect, template, run
 from setup import setup_user, generate_tasks
 from password_manager import generate_password_hash
 import sqlite3
@@ -140,5 +140,5 @@ def post_add():
 
 
 
-application = default_app()
-
+#application = default_app()
+run(host='localhost', port=8080, application=Bottle())
