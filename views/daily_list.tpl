@@ -16,6 +16,7 @@
 
     body {
       padding-top: 45px;
+      text-align: center
     }
 
     .button {
@@ -86,7 +87,7 @@
 <body>
 
 <h2>Daily List</h2>
-
+<p>Hello {{name}}!<p><br>
 <table>
   % for item in uncompleted_task_list:
     <tr>

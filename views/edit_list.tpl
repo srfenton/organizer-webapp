@@ -119,7 +119,7 @@
 </form>
 
 <ul class="footer-links">
-  <li><a href="/">home</a></li>
+  <li><a href="/">logout</a></li>
   <li><a href="/completed-list/{{context['user_id']}}">completed</a></li>
   <li><a href="/regenerate/{{context['user_id']}}">regenerate list</a></li>
   <li><a href="/list/{{context['user_id']}}">daily list</a></li>

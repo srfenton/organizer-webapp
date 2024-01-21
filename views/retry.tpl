@@ -75,6 +75,7 @@
 <h1>Home</h1>
 
 
+<p>please try again</p>
 
 
 <form action="/login" method="post">
@@ -82,7 +83,7 @@
   <p>username: <input name="username"/></p>
   <p>password: <input type="password" name="password"/></p>
   <p><button class="button button2" type="submit">login</button></p>
-
+  <input name="time_zone" type="hidden" value = time_zone />
 
 </form>
 

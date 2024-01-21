@@ -1,6 +1,6 @@
 from bottle import Bottle, default_app, route, get, post, request, redirect, template, run
-from setup import setup_user, generate_tasks
-from password_manager import generate_password_hash
+from setup import setup_user_list, generate_tasks
+from password_manager import generate_password_hash, verify_password_hash
 import sqlite3
 from datetime import datetime
 import pytz
@@ -17,22 +17,20 @@ def get_index():
 def get_login():
     user_id = request.forms.get('user_id')
     username = request.forms.get('username')
-    password = generate_password_hash(request.forms.get('password'))
-    time_zone = request.forms.get('time_zone')
+    typed_pwd = request.forms.get('password')
     cursor = connection.cursor()
     login_query = list(cursor.execute('select id, password from users where username = ?', (username,)))
     stored_password_hash = login_query[0][1]
-    user_id = login_query[0][0]
-    if password == stored_password_hash:
-        print('password check successful')
-
-    print(time_zone+'FINDMEHERE')
-
-    redirect(f'/list/{user_id}')
+    if verify_password_hash(typed_pwd,stored_password_hash):
+        print("login successful")
+        user_id = login_query[0][0]
+        redirect(f'/list/{user_id}')
+    else:
+        return template('retry')
+   
 
 @route('/logout')
 def get_logout():
-
     redirect('/')
 
 @route('/registration')
@@ -49,28 +47,27 @@ def post_register():
     connection.commit()
     rows = list(cursor.execute('select id from users where username = ?', (username,)))
     user_id= rows[0][0]
-    print(f"user id is {user_id} and is coming from the db")
     redirect(f'/list/{user_id}')
 
 
 @route('/list/<user_id>')
-# @route('/list/')
 def get_list(user_id):
-# def get_list():
-    date = datetime.now(tz=pytz.timezone('US/Pacific')).strftime("%Y-%m-%d")
     cursor = connection.cursor()
     rows = cursor.execute("select * from list where user_id = ?", (user_id,))
     rows = list(rows)
-    if len(rows) == 0:
-       generate_tasks(user_id, connection)
-       rows = cursor.execute("select id, user_id, task, date_assigned, completion_status from tasks where user_id = ? and completion_status = false and date_assigned = ?", (user_id, date))
-       rows = list(rows)
-    else:
-        rows = cursor.execute("select id, user_id, task, date_assigned, completion_status from tasks where user_id = ? and completion_status = false and date_assigned = ?", (user_id, date))
-        rows = list(rows)
-        rows = [ {'id':row[0] , 'user_id':row[1], 'task':row[2], 'date_assigned':row[3], 'completion_status':row[4]} for row in rows ]
+    user_record = list(cursor.execute("select * from users where id = ?", (user_id,)))
+    user_timezone = user_record[0][3]
+    username = user_record[0][1]
+    date = datetime.now(tz=pytz.timezone(user_timezone)).strftime("%Y-%m-%d")
+    prev_tasks_date = list(cursor.execute("select max(date_assigned) from tasks where user_id = ?", (user_id,)))
+    prev_tasks_date = prev_tasks_date[0][0]
+    if prev_tasks_date < date:
+        generate_tasks(user_id, user_timezone)
+    rows = cursor.execute("select id, user_id, task, date_assigned, completion_status from tasks where user_id = ? and completion_status = false and date_assigned = ?", (user_id, date))
+    rows = list(rows)
+    rows = [ {'id':row[0] , 'user_id':row[1], 'task':row[2], 'date_assigned':row[3], 'completion_status':row[4]} for row in rows ]
     context = {'user_id': user_id}
-    return template("daily_list.tpl", name="sf", uncompleted_task_list=rows, context=context)
+    return template("daily_list.tpl", name=username, uncompleted_task_list=rows, context=context)
 
 
 @route('/complete', method='POST')
@@ -94,8 +91,10 @@ def get_undo_complete_task():
 
 @route("/completed-list/<user_id>")
 def get_complete(user_id):
-    date = datetime.now(tz=pytz.timezone('US/Pacific')).strftime("%Y-%m-%d")
     cursor = connection.cursor()
+    user_record = list(cursor.execute("select * from users where id = ?", (user_id,)))
+    user_timezone = user_record[0][3]
+    date = datetime.now(tz=pytz.timezone(user_timezone)).strftime("%Y-%m-%d")
     rows = cursor.execute("select id, user_id, task, date_assigned, completion_status from tasks where user_id = ? and completion_status = true and date_assigned = ?", (user_id, date))
     rows = list(rows)
     rows = [ {'id':row[0], 'user_id':row[1], 'task':row[2], 'date_assigned':row[3], 'completion_status':row[4]} for row in rows ]
