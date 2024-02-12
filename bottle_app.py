@@ -156,5 +156,5 @@ def post_add():
 
 
 
-#application = default_app()
-run(host='localhost', port=8080, application=Bottle())
+application = default_app()
+#run(host='localhost', port=8080, application=Bottle())
