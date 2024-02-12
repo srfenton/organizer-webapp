@@ -75,15 +75,18 @@
 <h1>Home</h1>
 
 
+<script>
+  function setTimezone() {
+    const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+    document.getElementById('timezone').value = timezone;
+  }
+</script>
 
-
-<form action="/login" method="post">
-  <!--<p>user id: <input name="user_id"/></p>-->
+<form action="/login" method="post" onsubmit="setTimezone()">
   <p>username: <input name="username"/></p>
   <p>password: <input type="password" name="password"/></p>
   <p><button class="button button2" type="submit">login</button></p>
-
-
+  <p><input type="hidden" name="timezone" id="timezone" value=""></p>
 </form>
 
 <a href='/registration'>register</a>

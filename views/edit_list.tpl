@@ -102,6 +102,7 @@
             <p>
               <input name="id" type="hidden" value="{{str(item['id'])}}"/>
               <input name="user_id" type="hidden" value="{{str(item['user_id'])}}"/>
+              <input name="timezone" type="hidden" value="{{context['timezone']}}"/>
               <button class="button button2" type="submit">remove</button>
             </p>
           </form>
@@ -114,15 +115,16 @@
   <p>
     <input name="new_task"/>
     <input name="user_id" type="hidden" value="{{str(item['user_id'])}}"/>
+    <input name="timezone" type="hidden" value="{{context['timezone']}}"/>
     <button class="button button2" type="submit">add</button>
   </p>
 </form>
 
 <ul class="footer-links">
-  <li><a href="/">logout</a></li>
-  <li><a href="/completed-list/{{context['user_id']}}">completed</a></li>
-  <li><a href="/regenerate/{{context['user_id']}}">regenerate list</a></li>
-  <li><a href="/list/{{context['user_id']}}">daily list</a></li>
+  <li><a href="/logout">logout</a></li>
+  <li><a href="/completed-list/{{context['user_id']}}?timezone={{context['timezone']}}">completed</a></li>
+  <li><a href="/regenerate/{{context['user_id']}}?timezone={{context['timezone']}}">regenerate list</a></li>
+  <li><a href="/list/{{context['user_id']}}?timezone={{context['timezone']}}">daily list</a></li>
 </ul>
 
 </body>

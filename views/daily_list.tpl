@@ -87,7 +87,7 @@
 <body>
 
 <h2>Daily List</h2>
-<p>Hello {{name}}!<p><br>
+<p>Hello {{context['username']}}!<p><br>
 <table>
   % for item in uncompleted_task_list:
     <tr>
@@ -96,6 +96,8 @@
         <form action="/complete" method="post">
         <input name="user_id" type="hidden" value="{{ str(item['user_id']) }}"/>
         <input name="id" type="hidden" value="{{ str(item['id']) }}"/>
+        <input name="timezone" type="hidden" value="{{context['timezone']}}"/>
+        <input name="username" type="hidden" value="{{context['username']}}"/>
         <button class="button button2" type="submit">complete</button>
       </form>
       </td>
@@ -106,9 +108,9 @@
 
 <ul class="footer-links">
   <li><a href="/logout">logout</a></li>
-  <li><a href="/completed-list/{{context['user_id']}}">completed</a></li>
-  <li><a href="/regenerate/{{context['user_id']}}">regenerate list</a></li>
-  <li><a href="/edit-list/{{context['user_id']}}">edit list</a></li>
+  <li><a href="/completed-list/{{context['user_id']}}?timezone={{context['timezone']}}">completed</a></li>
+  <li><a href="/regenerate/{{context['user_id']}}?timezone={{context['timezone']}}">regenerate list</a></li>
+  <li><a href="/edit-list/{{context['user_id']}}?timezone={{context['timezone']}}">edit list</a></li>
 </ul>
 
 </body>

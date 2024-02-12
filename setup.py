@@ -85,27 +85,27 @@ def regenerate_tasks_table(connection=None):
         cursor.execute("drop table tasks")
     except:
         pass
-
-    cursor.execute("create table tasks (id integer primary key, user_id integer, task text, date_assigned text, completion_status boolean)")
+    cursor.execute('create table tasks (id integer primary key, user_id integer, task text, date_assigned text, completion_status boolean)')
 
     connection.commit()
 
     print("done.")
 
-def generate_tasks(user_id, user_timezone, connection=None):
+def generate_tasks(user_id, timezone, connection=None):
     if connection is None:
         connection = sqlite3.connect("daily_list.db")
-    date = datetime.now(tz=pytz.timezone(user_timezone)).strftime("%Y-%m-%d")
+    date = datetime.now(tz=pytz.timezone(timezone)).strftime("%Y-%m-%d")
     cursor = connection.cursor()
     cursor.execute('select id, user_id, task from list where user_id = ?;', (user_id,))
-
     rows = [(row[0],row[1], row[2]) for row in cursor.fetchall()]
     for x in rows:
         #add a conditional to check for duplicates
-        cursor.execute('insert into tasks (user_id, task, date_assigned, completion_status) values (?, ?, ?, false)', (x[1], x[2], date))
+        cursor.execute('select count (*) from tasks where user_id = ? and task = ? and date_assigned = ?', (x[1], x[2], date))
+        count = cursor.fetchone()[0]
+        if count == 0:
+            cursor.execute('insert into tasks (user_id, task, date_assigned, completion_status) values (?, ?, ?, false)', (x[1], x[2], date))
 
     connection.commit()
-
 
     print('done.')
 

@@ -82,6 +82,7 @@
       <form action="/undo-complete" method="post">
         <input name="user_id" type="hidden" value="{{str(item['user_id'])}}"/>
         <input name="id" type="hidden" value="{{str(item['id'])}}"/>
+        <input name="timezone" type="hidden" value="{{context['timezone']}}"/>
         <button class="button" type="submit">undo</button>
       </form>
 
@@ -92,9 +93,9 @@
 </table>
 
 <ul class="footer-links">
-  <li><a href="/">logout</a></li>
-  <li><a href="/list/{{context['user_id']}}">daily list</a></li>
-  <li><a href="/regenerate/{{context['user_id']}}">regenerate list</a></li>
+  <li><a href="/logout">logout</a></li>
+  <li><a href="/list/{{context['user_id']}}?timezone={{context['timezone']}}">daily list</a></li>
+  <li><a href="/regenerate/{{context['user_id']}}?timezone={{context['timezone']}}">regenerate list</a></li>
 </ul>
 
 </body>
