@@ -17,22 +17,31 @@ def get_index():
 def get_tz():
     return template('timezone.tpl')    
 
+
 @post('/login')
 def get_login():
-    user_id = request.forms.get('user_id')
     username = request.forms.get('username')
     typed_pwd = request.forms.get('password')
     timezone = request.forms.get('timezone')
     
+    if not username or not typed_pwd:
+        return template('retry')
+
     cursor = connection.cursor()
-    login_query = list(cursor.execute('select id, password from users where username = ?', (username,)))
-    stored_password_hash = login_query[0][1]
-    if verify_password_hash(typed_pwd,stored_password_hash):
+    cursor.execute('SELECT id, password, username FROM users WHERE username = ?', (username,))
+    user = cursor.fetchone()
+    
+    if user is None:
+        return template('retry')
+
+    user_id, stored_password_hash, stored_username = user
+    
+    if verify_password_hash(typed_pwd, stored_password_hash):
         print("login successful")
-        user_id = login_query[0][0]
         redirect(f'/list/{user_id}?timezone={timezone}')
     else:
         return template('retry')
+
    
 
 @route('/logout')
@@ -152,6 +161,50 @@ def post_add():
     connection.commit()
     redirect(f'/edit-list/{user_id}?timezone={timezone}')
 
+
+@get('/stats/<user_id>')
+def get_stats(user_id):
+    cursor = connection.cursor()
+    rows = cursor.execute('''
+    SELECT 
+        l.task, 
+        COALESCE(completed_tasks.completed_tasks, 0) AS complete_task_count,
+        COALESCE(days_assigned.days_assigned, 0) AS days_assigned_count,
+        printf("%.2f%%", COALESCE(completed_tasks.completed_tasks, 0) * 100.0 / COALESCE(days_assigned.days_assigned, 1)) AS percentage
+    
+    FROM 
+        list l
+        
+    LEFT JOIN 
+        (SELECT task, COUNT(*) AS completed_tasks 
+        FROM tasks 
+        WHERE user_id = ? AND completion_status = true 
+        GROUP BY task) AS completed_tasks
+    ON 
+        l.task = completed_tasks.task
+        
+    LEFT JOIN
+        (select task, (JULIANDAY(DATE('now')) - JULIANDAY(MIN(date_assigned))) AS days_assigned
+        from tasks 
+        where user_id = ?
+        group by task) as days_assigned
+    ON
+        l.task = days_assigned.task
+
+    WHERE
+        l.user_id = ?
+    ORDER BY percentage desc;
+        
+                      
+                          
+    ''', (user_id,user_id,user_id,))
+    rows = list(rows)
+    user_record = list(cursor.execute("select * from users where id = ?", (user_id,)))
+    username = user_record[0][1]
+    rows = [ {'task':row[0], 'completion_task_count':row[1], 'days_assigned_count':int(row[2]), 'percentage_complete':row[3]} for row in rows ]
+    timezone = request.query.get('timezone')
+    context = {'user_id': user_id, 'username' : username, 'timezone' : timezone}
+    return template("stats.tpl", name=username, stats_list=rows, context=context)
 
 
 
