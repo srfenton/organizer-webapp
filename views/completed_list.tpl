@@ -94,7 +94,7 @@
 
 <ul class="footer-links">
   <li><a href="/logout">logout</a></li>
-  <li><a href="/list/{{context['user_id']}}?timezone={{context['timezone']}}">daily list</a></li>
+  <li><a href="/list/{{context['user_id']}}?timezone={{context['timezone']}}">list</a></li>
   <li><a href="/regenerate/{{context['user_id']}}?timezone={{context['timezone']}}">regenerate list</a></li>
 </ul>
 

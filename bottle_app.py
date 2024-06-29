@@ -1,6 +1,6 @@
 from bottle import Bottle, default_app, route, get, post, request, redirect, template, run
 from setup import setup_user_list, generate_tasks
-from password_manager import generate_password_hash, verify_password_hash
+from password_manager import generate_password_hash, verify_password_hash, is_valid_password
 import sqlite3
 from datetime import datetime
 import pytz
@@ -55,16 +55,30 @@ def get_registration():
 
 @post('/register')
 def post_register():
-    username = request.forms.get('username')
-    password_hash = generate_password_hash(request.forms.get('password'))
-    timezone = request.forms.get('timezone')
     cursor = connection.cursor()
+    username = request.forms.get('username')
+    password_unhashed = request.forms.get('password')
+    password_confirmation = request.forms.get('password_confirmation')
+    if username == '' or username is None:
+        return template('registration')
+
+    check_username_in_database_result = cursor.execute('select * from users where username = ?', (username,))
+    user = cursor.fetchone()
+    print(f'{user} is user')
+    if user != None:
+        return template('registration')
+    if is_valid_password(password_unhashed, password_confirmation) == False:
+        print(f'{is_valid_password(password_unhashed, password_confirmation) == False} is the password validator')
+        return template('registration')
+    password_hash = generate_password_hash(password_unhashed)
+    timezone = request.forms.get('timezone')
     insert_user_record = cursor.execute('insert into users (username, password) values (?,?)', (username, password_hash))
     connection.commit()
     rows = list(cursor.execute('select id from users where username = ?', (username,)))
     user_id= rows[0][0]
     setup_user_list(user_id)
     redirect(f'/list/{user_id}?timezone={timezone}')
+
 
 
 @route('/list/<user_id>')
