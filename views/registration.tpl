@@ -85,6 +85,7 @@
 <form action="/register" method="post" onsubmit="setTimezone()">
   <p>username: <input name="username"/></p>
   <p>password: <input name="password" type="password"/></p>
+  <p>password confirmation: <input name="password_confirmation" type="password"/></p>
   <p><input type="hidden" name="timezone" id="timezone" value=""></p>
   <p><button class="button button2" type="submit">register</button></p>
 </form>

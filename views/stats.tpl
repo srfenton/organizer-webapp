@@ -112,6 +112,7 @@
 </table>
 
 <ul class="footer-links">
+  <li><a href="/list/{{context['user_id']}}?timezone={{context['timezone']}}">list</a></li>
   <li><a href="/completed-list/{{context['user_id']}}?timezone={{context['timezone']}}">completed</a></li>
   <li><a href="/regenerate/{{context['user_id']}}?timezone={{context['timezone']}}">regenerate list</a></li>
   <li><a href="/edit-list/{{context['user_id']}}?timezone={{context['timezone']}}">edit list</a></li>

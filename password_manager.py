@@ -22,6 +22,22 @@ def verify_password_hash(password,password_hash):
     password_key = to_str(hashlib.pbkdf2_hmac("sha256", password.encode('utf-8'),salt,100000))
     return saved_key == password_key
 
+def is_valid_password(password, password_confirmation):
+    if password_confirmation == None:
+        return False
+    if password_confirmation == '':
+        return False
+    if password == None:
+        return False
+    if password == '':
+        return False
+    if password != password_confirmation:
+        return False
+    if len(password) < 8:
+        return False
+        
+    return True
+
 
 if __name__ == "__main__":
     e = generate_password_hash("test")
