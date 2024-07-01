@@ -74,7 +74,7 @@
 
 <h1>Register</h1>
 
-
+<p><b>Please create a password with at least 8 characters</b></p>
 <script>
   function setTimezone() {
     const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
@@ -85,7 +85,7 @@
 <form action="/register" method="post" onsubmit="setTimezone()">
   <p>username: <input name="username"/></p>
   <p>password: <input name="password" type="password"/></p>
-  <p>password confirmation: <input name="password_confirmation" type="password"/></p>
+  <p>confirmation: <input name="password_confirmation" type="password"/></p>
   <p><input type="hidden" name="timezone" id="timezone" value=""></p>
   <p><button class="button button2" type="submit">register</button></p>
 </form>

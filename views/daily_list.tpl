@@ -86,8 +86,8 @@
 </head>
 <body>
 
-<h2>Daily List</h2>
-<p>Hello {{context['username']}}!<p><br>
+<h2>Hello {{context['username']}}!<p></h2>
+<br>
 <table>
   % for item in uncompleted_task_list:
     <tr>
