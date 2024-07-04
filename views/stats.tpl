@@ -19,7 +19,7 @@
     }
 
     .button {
-      background-color: #fd5844; /* electric orange */
+      background-color: #000000; /* black */
       border: none;
       color: white;
       font-family: 'Nunito Sans';
@@ -58,7 +58,8 @@
     }
 
     th {
-      background-color: #f2f2f2;
+      background-color: #000000;
+      color: #FFFFFF;
     }
 
     h2 {
@@ -88,8 +89,9 @@
 
 <body>
 
-<h2>Daily List</h2>
-<p>Hello {{context['username']}}!<p><br>
+<h2><h2>Hello {{context['username']}}!<p></h2></h2>
+<h4>stats</h4>
+<br>
 <table>
   <thead>
     <tr>

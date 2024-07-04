@@ -19,7 +19,7 @@
     }
 
     .button {
-      background-color: #fd5844; /* electric orange */
+      background-color: #000000; /* black */
       border: none;
       color: white;
       box-sizing: border-box;
@@ -85,6 +85,25 @@
     form {
       margin: 0 auto 45px;
       text-align: center;
+    }
+
+    input[name="new_task"] {
+      border: 0 none;
+      font: 'Nunito Sans';
+      color: #000000;
+      width: 150px;
+      padding: 6px 15px 6px 35px;
+      -webkit-border-radius: 20px;
+      -moz-border-radius: 20px;
+      border-radius: 20px;
+      -webkit-box-shadow: 0 1px 0 rgba(255, 255, 255, 0.1), 0 1px 3px rgba(0, 0, 0, 0.2) inset;
+      -moz-box-shadow: 0 1px 0 rgba(255, 255, 255, 0.1), 0 1px 3px rgba(0, 0, 0, 0.2) inset;
+      box-shadow: 0 1px 0 rgba(255, 255, 255, 0.1), 0 1px 3px rgba(0, 0, 0, 0.2) inset;
+      -webkit-transition: all 0.7s ease 0s;
+      -moz-transition: all 0.7s ease 0s;
+      -o-transition: all 0.7s ease 0s;
+      transition: all 0.7s ease 0s;
+    }
 
   </style>
 
