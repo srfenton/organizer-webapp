@@ -8,9 +8,10 @@
 
   <style>
 
+    
     a, a:visited {
       text-decoration: none;
-      color: inherited;
+      color: black;
     }
 
     body {
@@ -56,6 +57,7 @@
       background-color: inherit;
       border: none;
       cursor: pointer;
+      color: black;
       font-family: inherit;
       font-size: inherit;
       line-height: inherit;
