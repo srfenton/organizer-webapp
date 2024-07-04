@@ -20,7 +20,7 @@
     }
 
     .button {
-      background-color: #fd5844; /* electric orange */
+      background-color: #000000; /* electric orange */
       border: none;
       color: white;
       font-family: 'Nunito Sans';

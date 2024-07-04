@@ -31,7 +31,7 @@
     }
 
     .button {
-          background-color: #fd5844; /* electric orange */
+          background-color: #000000; /* black */
           border: none;
           color: white;
           box-sizing: border-box;

@@ -10,7 +10,7 @@
 
     a, a:visited {
       text-decoration: none;
-      color: black;
+      color: inherited;
     }
 
     body {
@@ -53,7 +53,7 @@
     }
 
     .button {
-      background-color: transparent;
+      background-color: inherit;
       border: none;
       cursor: pointer;
       font-family: inherit;
@@ -65,7 +65,7 @@
     }
 
 .button:hover {
-  color: #fd5844;
+  color: #FA2D48;
   background-color: transparent;
 }
 
