@@ -86,11 +86,9 @@
     }
   </style>
 </head>
-
 <body>
 
 <h2><h2>Hello {{context['username']}}!<p></h2></h2>
-<h4>stats</h4>
 <br>
 <table>
   <thead>
