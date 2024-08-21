@@ -3,7 +3,7 @@ import sqlite3
 
 connection = sqlite3.connect('daily_list.db')
 
-
+#ideally, instead of several different tables, as many of these functions as possible should generate a dictionary with their task as key and result as the value. That way, they can be aggregated to a single table.
 def generate_total_percentages(user_id,connection=None):
     if connection is None:
         connection = sqlite3.connect("daily_list.db")
@@ -68,7 +68,7 @@ def generate_total_percentages(user_id,connection=None):
             l.task = completed_tasks.task
             
         LEFT JOIN
-            (select task, (JULIANDAY(DATE('now')) - JULIANDAY(MIN(date_assigned))) AS days_assigned
+            (select task, (JULIANDAY(DATE('now')) - JULIANDAY(MIN(date_assigned)) + 1) AS days_assigned
             from tasks 
             where user_id = ?
             group by task) as days_assigned
