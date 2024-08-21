@@ -198,7 +198,7 @@ def get_stats(user_id):
         l.task = completed_tasks.task
         
     LEFT JOIN
-        (select task, (JULIANDAY(DATE('now')) - JULIANDAY(MIN(date_assigned))) AS days_assigned
+        (select task, (JULIANDAY(DATE('now')) - JULIANDAY(MIN(date_assigned)) + 1) AS days_assigned
         from tasks 
         where user_id = ?
         group by task) as days_assigned
