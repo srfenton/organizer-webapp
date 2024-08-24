@@ -131,9 +131,22 @@ WHERE
 
     return rows
 
+#this function takes a list of tuples as its argument generated from sqlite with each task in index 0 of the tuple and the aggregated value in index 3 
+def generate_stats_table(current_month, total_percentages):
+    stats_table = {}
+    #create a dict for each task and a nested dict total and current month values
+    for x in total_percentages:
+        stats_table.update({x[0] : [{'total' : x[3]}]}) 
+    for x in current_month:
+        stats_table[x[0]].append({'current month':x[3]})
+    
+    return stats_table
 
 if __name__ == '__main__':
-    print(generate_total_percentages(1))
-    print(generate_current_month(1))
+    current_month = generate_current_month(1)
+    total_percentages = generate_total_percentages(1)
+    # print(current_month)
+    # print(total_percentages)
+    generate_stats_table(current_month, total_percentages)
     print('done...')
     
