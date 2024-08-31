@@ -94,18 +94,20 @@
   <thead>
     <tr>
       <th>Task</th>
+      <th>Current Month</th>
+      <th>Total</th>
       <th>Completed</th>
       <th>Days Assigned</th>
-      <th>% Completed</th>
     </tr>
   </thead>
   <tbody>
   % for item in stats_list:
     <tr>
       <td>{{str(item['task'])}}</td>
-      <td>{{str(item['completion_task_count'])}}</td>
-      <td>{{str(item['days_assigned_count'])}}</td>
-      <td>{{str(item['percentage_complete'])}}</td>
+      <td>{{str(item['current month'])}}</td>
+      <td>{{str(item['percentage complete'])}}</td>
+      <td>{{str(item['completion count'])}}</td>
+      <td>{{str(item['days assigned count'])}}</td>
     </tr>
   % end
   </tbody>
