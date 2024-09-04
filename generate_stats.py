@@ -45,6 +45,8 @@ def generate_total_percentages(user_id,connection=None):
 
     return rows
 
+    
+#this query needs rebuilt. Reverting back to the previous days assigned count for now. 
 def generate_current_month(user_id,connection=None):
     if connection is None:
         connection = sqlite3.connect("daily_list.db")
@@ -58,7 +60,6 @@ def generate_current_month(user_id,connection=None):
         AND date_assigned BETWEEN DATE('now', 'start of month') AND DATE('now')
         GROUP BY task
     )
-#this query needs rebuilt. Reverting back to the previous days assigned count for now. 
     SELECT 
         l.task, 
         COALESCE(completed_tasks.completed_tasks, 0) AS complete_task_count,
