@@ -52,13 +52,13 @@ def generate_current_month(user_id,connection=None):
     total_percentages = cursor.execute('''
 
         WITH days_assigned AS (
-        SELECT task, COUNT(*)+1 AS days_assigned
+        SELECT task, COUNT(*) AS days_assigned
         FROM tasks 
         WHERE user_id = ? 
         AND date_assigned BETWEEN DATE('now', 'start of month') AND DATE('now')
         GROUP BY task
     )
-
+#this query needs rebuilt. Reverting back to the previous days assigned count for now. 
     SELECT 
         l.task, 
         COALESCE(completed_tasks.completed_tasks, 0) AS complete_task_count,
@@ -111,3 +111,4 @@ if __name__ == '__main__':
     # print(generate_stats_list(current_month, total_percentages))
     print('done...')
     
+
