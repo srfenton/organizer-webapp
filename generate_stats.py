@@ -52,7 +52,7 @@ def generate_current_month(user_id,connection=None):
     total_percentages = cursor.execute('''
 
         WITH days_assigned AS (
-        SELECT task, COUNT(*) AS days_assigned
+        SELECT task, COUNT(*)+1 AS days_assigned
         FROM tasks 
         WHERE user_id = ? 
         AND date_assigned BETWEEN DATE('now', 'start of month') AND DATE('now')
@@ -106,8 +106,8 @@ def generate_stats_list(current_month, total_percentages):
 if __name__ == '__main__':
     current_month = generate_current_month(3)
     total_percentages = generate_total_percentages(3)
-    # print(current_month)
+    print(current_month)
     # print(total_percentages)
-    print(generate_stats_list(current_month, total_percentages))
+    # print(generate_stats_list(current_month, total_percentages))
     print('done...')
     
