@@ -51,7 +51,7 @@ def generate_current_month(user_id,connection=None):
     if connection is None:
         connection = sqlite3.connect("daily_list.db")
     cursor = connection.cursor()
-    total_percentages = cursor.execute('''
+    current_month = cursor.execute('''
 
         WITH days_assigned AS (
         SELECT task, COUNT(*) AS days_assigned
@@ -90,7 +90,7 @@ def generate_current_month(user_id,connection=None):
                         
                             
         ''', (user_id,user_id,user_id,))
-    rows = list(total_percentages)
+    rows = list(current_month)
 
     return rows
 
@@ -103,6 +103,13 @@ def generate_stats_list(current_month, total_percentages):
                 i.update({'current month' : x[3]})
 
     return stats_list
+
+
+#this new query combines the total, current month and adds previous month stats in one transaction.
+def generate_main_table():
+    pass   
+
+
 
 if __name__ == '__main__':
     current_month = generate_current_month(3)
