@@ -95,8 +95,8 @@
     <tr>
       <th>Task</th>
       <th>Current Month</th>
-      <th>Total</th>
-      <th>Completed</th>
+      <th>Previous Month</th>
+      <th>Total Percentage</th>
       <th>Days Assigned</th>
     </tr>
   </thead>
@@ -105,8 +105,8 @@
     <tr>
       <td>{{str(item['task'])}}</td>
       <td>{{str(item['current month'])}}</td>
-      <td>{{str(item['percentage complete'])}}</td>
-      <td>{{str(item['completion count'])}}</td>
+      <td>{{str(item['previous month'])}}</td>
+      <td>{{str(item['total percentage'])}}</td>
       <td>{{str(item['days assigned count'])}}</td>
     </tr>
   % end

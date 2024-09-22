@@ -1,7 +1,7 @@
 from bottle import Bottle, default_app, route, get, post, response, request, redirect, template, run, error
 from setup import setup_user_list, generate_tasks
 from password_manager import generate_password_hash, verify_password_hash, is_valid_password
-from generate_stats import generate_current_month, generate_total_percentages, generate_stats_list
+from generate_stats import generate_main_table, generate_current_month, generate_total_percentages, generate_stats_list
 from datetime import datetime
 from session_manager import random_id
 import sqlite3
@@ -185,9 +185,10 @@ def get_stats(user_id):
     cursor = connection.cursor()
     user_record = list(cursor.execute("select * from users where id = ?", (user_id,)))
     username = user_record[0][1]
-    total_percentages = generate_total_percentages(user_id)
-    current_month = generate_current_month(user_id)
-    rows = generate_stats_list(current_month, total_percentages)
+    # total_percentages = generate_total_percentages(user_id)
+    # current_month = generate_current_month(user_id)
+    # # rows = generate_stats_list(current_month, total_percentages)
+    rows = generate_main_table(user_id)
     timezone = request.query.get('timezone')
     context = {'user_id': user_id, 'username' : username, 'timezone' : timezone}
     return template("stats.tpl", name=username, stats_list=rows, context=context)
