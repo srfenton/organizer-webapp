@@ -25,6 +25,8 @@ def get_tz():
 @post('/login')
 def get_login():
     username = request.forms.get('username')
+    #the username should be case insensitive and free of white space
+    username = username.lower().strip()
     typed_pwd = request.forms.get('password')
     timezone = request.forms.get('timezone')
     
@@ -61,6 +63,8 @@ def get_registration():
 def post_register():
     cursor = connection.cursor()
     username = request.forms.get('username')
+    #the username should be case insensitive and free of white space
+    username = username.lower().strip() 
     password_unhashed = request.forms.get('password')
     password_confirmation = request.forms.get('password_confirmation')
     if username == '' or username is None:
@@ -167,6 +171,7 @@ def post_remove_item():
     cursor = connection.cursor()
     cursor.execute("delete from list where id = ?", (id,))
     connection.commit()
+    #there needs to be a task here that deletes all the records for the removed task.
     redirect(f'/edit-list/{user_id}?timezone={timezone}')
 
 @post('/add-task')
@@ -185,9 +190,6 @@ def get_stats(user_id):
     cursor = connection.cursor()
     user_record = list(cursor.execute("select * from users where id = ?", (user_id,)))
     username = user_record[0][1]
-    # total_percentages = generate_total_percentages(user_id)
-    # current_month = generate_current_month(user_id)
-    # # rows = generate_stats_list(current_month, total_percentages)
     rows = generate_main_table(user_id)
     timezone = request.query.get('timezone')
     context = {'user_id': user_id, 'username' : username, 'timezone' : timezone}
