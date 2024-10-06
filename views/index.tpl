@@ -72,8 +72,11 @@
 
 <body>
 
-<h1>Home</h1>
-
+<!-- <h1>Home</h1> -->
+<br>
+<h4>“Bohr kept coming back to the different meanings of the word ‘I,’ ” Robert Oppenheimer remembered, “the ‘I’ that acts, the ‘I,’ that thinks, the ‘I,’ that studies itself."</h4>
+<br>
+<br>
 
 <script>
   function setTimezone() {

@@ -1,8 +1,10 @@
-from bottle import Bottle, default_app, route, get, post, request, redirect, template, run
+from bottle import Bottle, default_app, route, get, post, response, request, redirect, template, run, error
 from setup import setup_user_list, generate_tasks
 from password_manager import generate_password_hash, verify_password_hash, is_valid_password
-import sqlite3
+from generate_stats import generate_main_table
 from datetime import datetime
+from session_manager import random_id
+import sqlite3
 import pytz
 
 
@@ -11,6 +13,8 @@ connection = sqlite3.connect("daily_list.db")
 
 @route('/')
 def get_index():
+    session_id = random_id()
+    print(session_id)
     return template('index.tpl')
 
 @route('/tz')
@@ -21,6 +25,8 @@ def get_tz():
 @post('/login')
 def get_login():
     username = request.forms.get('username')
+    #the username should be case insensitive and free of white space
+    username = username.lower().strip()
     typed_pwd = request.forms.get('password')
     timezone = request.forms.get('timezone')
     
@@ -57,6 +63,8 @@ def get_registration():
 def post_register():
     cursor = connection.cursor()
     username = request.forms.get('username')
+    #the username should be case insensitive and free of white space
+    username = username.lower().strip() 
     password_unhashed = request.forms.get('password')
     password_confirmation = request.forms.get('password_confirmation')
     if username == '' or username is None:
@@ -163,6 +171,7 @@ def post_remove_item():
     cursor = connection.cursor()
     cursor.execute("delete from list where id = ?", (id,))
     connection.commit()
+    #there needs to be a task here that deletes all the records for the removed task.
     redirect(f'/edit-list/{user_id}?timezone={timezone}')
 
 @post('/add-task')
@@ -179,43 +188,9 @@ def post_add():
 @get('/stats/<user_id>')
 def get_stats(user_id):
     cursor = connection.cursor()
-    rows = cursor.execute('''
-    SELECT 
-        l.task, 
-        COALESCE(completed_tasks.completed_tasks, 0) AS complete_task_count,
-        COALESCE(days_assigned.days_assigned, 0) AS days_assigned_count,
-        printf("%.2f%%", COALESCE(completed_tasks.completed_tasks, 0) * 100.0 / COALESCE(days_assigned.days_assigned, 1)) AS percentage
-    
-    FROM 
-        list l
-        
-    LEFT JOIN 
-        (SELECT task, COUNT(*) AS completed_tasks 
-        FROM tasks 
-        WHERE user_id = ? AND completion_status = true 
-        GROUP BY task) AS completed_tasks
-    ON 
-        l.task = completed_tasks.task
-        
-    LEFT JOIN
-        (select task, (JULIANDAY(DATE('now')) - JULIANDAY(MIN(date_assigned)) + 1) AS days_assigned
-        from tasks 
-        where user_id = ?
-        group by task) as days_assigned
-    ON
-        l.task = days_assigned.task
-
-    WHERE
-        l.user_id = ?
-    ORDER BY percentage desc;
-        
-                      
-                          
-    ''', (user_id,user_id,user_id,))
-    rows = list(rows)
     user_record = list(cursor.execute("select * from users where id = ?", (user_id,)))
     username = user_record[0][1]
-    rows = [ {'task':row[0], 'completion_task_count':row[1], 'days_assigned_count':int(row[2]), 'percentage_complete':row[3]} for row in rows ]
+    rows = generate_main_table(user_id)
     timezone = request.query.get('timezone')
     context = {'user_id': user_id, 'username' : username, 'timezone' : timezone}
     return template("stats.tpl", name=username, stats_list=rows, context=context)
