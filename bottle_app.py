@@ -1,7 +1,7 @@
 from bottle import Bottle, default_app, route, get, post, response, request, redirect, template, run, error
 from setup import setup_user_list, generate_tasks
 from password_manager import generate_password_hash, verify_password_hash, is_valid_password
-from generate_stats import generate_main_table, generate_current_month, generate_total_percentages, generate_stats_list
+from generate_stats import generate_main_table
 from datetime import datetime
 from session_manager import random_id
 import sqlite3
