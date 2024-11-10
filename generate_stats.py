@@ -28,7 +28,15 @@ def generate_main_table(user_id,connection=None):
 
     previous_month AS (
         SELECT task,
-            COUNT(*) AS days_assigned
+            CASE
+               -- If the task was assigned before the start of the previous month, count all days of the previous month
+               WHEN MIN(date_assigned) < DATE('now', 'start of month', '-1 month') 
+               THEN JULIANDAY(DATE('now', 'start of month')) - JULIANDAY(DATE('now', 'start of month', '-1 month')) 
+               
+               -- Otherwise, count from the date the task was first assigned within the previous month
+               ELSE JULIANDAY(DATE('now', 'start of month')) - JULIANDAY(MIN(date_assigned)) 
+               
+           END AS days_assigned
         FROM tasks 
         WHERE user_id = ?
         AND date_assigned BETWEEN DATE('now', 'start of month', '-1 month') AND DATE('now', 'start of month', '-1 day')
