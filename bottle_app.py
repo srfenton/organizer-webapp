@@ -3,7 +3,7 @@ from setup import setup_user_list, generate_tasks
 from password_manager import generate_password_hash, verify_password_hash, is_valid_password
 from generate_stats import generate_main_table
 from datetime import datetime
-from session_manager import random_id
+from session_manager import random_id, validate_session
 import sqlite3
 import pytz
 
@@ -13,9 +13,11 @@ connection = sqlite3.connect("daily_list.db")
 
 @route('/')
 def get_index():
-    session_id = random_id()
-    print(session_id)
-    return template('index.tpl')
+    session_id = request.get_cookie("session_id")
+    if not session_id:
+        session_id = random_id()
+        response.set_cookie("session_id", session_id)
+    return template('index.tpl')    
 
 @route('/tz')
 def get_tz():
@@ -44,6 +46,20 @@ def get_login():
     
     if verify_password_hash(typed_pwd, stored_password_hash):
         print("login successful")
+        session_id = request.get_cookie("session_id")
+         # Check if the session_id already exists
+        cursor.execute('SELECT * FROM sessions WHERE session_id = ?', (session_id,))
+        existing_session = cursor.fetchone()
+        if existing_session:
+            # If session_id exists, update it or handle appropriately
+            print("Session already exists, skipping insertion")
+        else:
+            cursor.execute('INSERT INTO sessions (user_id, session_id) VALUES (?, ?)', (user_id, session_id))
+            connection.commit()
+            print('saving session_id')
+
+
+        response.set_cookie("user_id", str(user_id))
         redirect(f'/list/{user_id}?timezone={timezone}')
     else:
         return template('retry')
@@ -52,6 +68,8 @@ def get_login():
 
 @route('/logout')
 def get_logout():
+    response.delete_cookie('session_id')
+    response.delete_cookie('user_id')
     redirect('/')
 
 @route('/registration')
@@ -85,12 +103,19 @@ def post_register():
     rows = list(cursor.execute('select id from users where username = ?', (username,)))
     user_id= rows[0][0]
     setup_user_list(user_id)
+    cursor.execute('insert into sessions (user_id, session_id) values (?,?)', (user_id, session_id))
     redirect(f'/list/{user_id}?timezone={timezone}')
 
 
 
 @route('/list/<user_id>')
 def get_list(user_id):
+
+    session_id = request.get_cookie('session_id')
+    # Validate the session before proceeding
+    if not validate_session(session_id, user_id):
+        redirect('/')  # Redirect to login page if session is invalid
+    
     timezone = request.query.get('timezone')
     cursor = connection.cursor()
     rows = cursor.execute("select * from list where user_id = ?", (user_id,))
@@ -113,17 +138,30 @@ def get_list(user_id):
 
 @route('/complete', method='POST')
 def get_complete_task():
+    session_id = request.get_cookie("session_id")
+    user_id = request.get_cookie('user_id')
+
+    # Validate the session before proceeding
+    if not validate_session(session_id, user_id):
+        redirect('/')  # Redirect to login page if session is invalid
     id = request.forms.get('id')
     timezone = request.forms.get('timezone')
     user_id = request.forms.get('user_id')
     cursor = connection.cursor()
     cursor.execute("update tasks set completion_status = true where id = ?", (id,))
     connection.commit()
+    print('complete action was successful')
     redirect(f'/list/{user_id}?timezone={timezone}')
 
 
 @route('/undo-complete', method='POST')
 def get_undo_complete_task():
+    session_id = request.get_cookie('session_id')
+    user_id = request.get_cookie('user_id')
+    
+    # Validate the session before proceeding
+    if not validate_session(session_id, user_id):
+        redirect('/')  # Redirect to login page if session is invalid
     id = request.forms.get('id')
     user_id = request.forms.get('user_id')
     timezone = request.forms.get('timezone')
@@ -134,6 +172,11 @@ def get_undo_complete_task():
 
 @route("/completed-list/<user_id>")
 def get_complete(user_id):
+    session_id = request.get_cookie('session_id') 
+    
+    # Validate the session before proceeding
+    if not validate_session(session_id, user_id):
+        redirect('/')  # Redirect to login page if session is invalid
     cursor = connection.cursor()
     user_record = list(cursor.execute("select * from users where id = ?", (user_id,)))
     username = user_record[0][1]
@@ -149,12 +192,24 @@ def get_complete(user_id):
 
 @route('/regenerate/<user_id>')
 def get_regenerate(user_id):
+    session_id = request.get_cookie('session_id')
+    user_id = request.get_cookie('user_id')
+    # Validate the session before proceeding
+    if not validate_session(session_id, user_id):
+        redirect('/')  # Redirect to login page if session is invalid
     timezone = request.query.get('timezone')
     generate_tasks(user_id, timezone)
     redirect(f'/list/{user_id}?timezone={timezone}')
 
 @route('/edit-list/<user_id>')
 def get_edit_list(user_id):
+    session_id = request.get_cookie("session_id")
+    user_id = request.get_cookie('user_id')
+
+    
+    # Validate the session before proceeding
+    if not validate_session(session_id, user_id):
+        redirect('/')  # Redirect to login page if session is invalid
     cursor = connection.cursor()
     rows = cursor.execute("select id, user_id, task from list where user_id = ?", (user_id,))
     rows = list(rows)
@@ -165,9 +220,15 @@ def get_edit_list(user_id):
 
 @post('/remove-task')
 def post_remove_item():
+    session_id = request.get_cookie("session_id")
+    user_id = request.get_cookie('user_id')
+    
+    # Validate the session before proceeding
+    if not validate_session(session_id, user_id):
+        redirect('/')  # Redirect to login page if session is invalid
     id = request.forms.get("id")
     timezone = request.forms.get('timezone')
-    user_id = request.forms.get("user_id")
+    #user_id = request.forms.get("user_id") this will likely be removed since the user_id is stored in the user's browser.
     cursor = connection.cursor()
     cursor.execute("delete from list where id = ?", (id,))
     connection.commit()
@@ -176,8 +237,14 @@ def post_remove_item():
 
 @post('/add-task')
 def post_add():
+    session_id = request.get_cookie("session_id")
+    user_id = request.get_cookie('user_id')
+    
+    # Validate the session before proceeding
+    if not validate_session(session_id, user_id):
+        redirect('/')  # Redirect to login page if session is invalid
     new_task = request.forms.get("new_task")
-    user_id = request.forms.get("user_id")
+    #user_id = request.forms.get("user_id")
     timezone = request.forms.get("timezone")
     cursor = connection.cursor()
     cursor.execute("insert into list (user_id, task) values (?,?)", (user_id, new_task,))
@@ -187,6 +254,11 @@ def post_add():
 
 @get('/stats/<user_id>')
 def get_stats(user_id):
+    session_id = request.get_cookie("session_id")
+    
+    # Validate the session before proceeding
+    if not validate_session(session_id, user_id):
+        redirect('/')  # Redirect to login page if session is invalid
     cursor = connection.cursor()
     user_record = list(cursor.execute("select * from users where id = ?", (user_id,)))
     username = user_record[0][1]
@@ -199,4 +271,4 @@ def get_stats(user_id):
 
 
 #application = default_app()
-run(host='localhost', port=8080, application=Bottle())
+run(host='localhost', port=8080, application=Bottle(), debug=True, reloader=True)
