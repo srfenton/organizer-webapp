@@ -271,5 +271,5 @@ def get_stats(user_id):
 
 
 application = default_app()
-run(host='localhost', port=8080, application=Bottle())
+# run(host='localhost', port=8080, application=Bottle())
 
