@@ -84,34 +84,59 @@
       color: black;
       text-decoration: none;
     }
+    @media (max-width: 600px) {
+  table, thead, tbody, th, td, tr {
+    display: block;
+  }
+  th {
+    display: none; /* Hide table headers */
+  }
+  td {
+    display: block;
+    text-align: right; /* Optional */
+    padding-left: 50%;
+    position: relative;
+  }
+  td::before {
+    content: attr(data-label); /* Add data-label to display headers */
+    position: absolute;
+    left: 0;
+    width: 50%;
+    padding-left: 10px;
+    font-weight: bold;
+    text-align: left;
+  }
+}
   </style>
 </head>
 <body>
 
 <h2><h2>Hello {{context['username']}}!<p></h2></h2>
 <br>
-<table>
-  <thead>
-    <tr>
-      <th>Task</th>
-      <th>Current Month</th>
-      <th>Previous Month</th>
-      <th>Total Percentage</th>
-      <th>Days Assigned</th>
-    </tr>
-  </thead>
-  <tbody>
-  % for item in stats_list:
-    <tr>
-      <td>{{str(item['task'])}}</td>
-      <td>{{str(item['current month'])}}</td>
-      <td>{{str(item['previous month'])}}</td>
-      <td>{{str(item['total percentage'])}}</td>
-      <td>{{str(item['days assigned count'])}}</td>
-    </tr>
-  % end
-  </tbody>
-</table>
+<div class="table-container">
+  <table>
+    <thead>
+      <tr>
+        <th>Task</th>
+        <th>Current Month</th>
+        <th>Previous Month</th>
+        <th>Total Percentage</th>
+        <th>Days Assigned</th>
+      </tr>
+    </thead>
+    <tbody>
+    % for item in stats_list:
+      <tr>
+        <td data-label="Task">{{str(item['task'])}}</td>
+        <td data-label="Current Month">{{str(item['current month'])}}</td>
+        <td data-label="Previous Month">{{str(item['previous month'])}}</td>
+        <td data-label="Total Percentage">{{str(item['total percentage'])}}</td>
+        <td data-label="Days Assigned">{{str(item['days assigned count'])}}</td>
+      </tr>
+    % end
+    </tbody>
+  </table>
+</div>
 
 <ul class="footer-links">
   <li><a href="/list/{{context['user_id']}}?timezone={{context['timezone']}}">list</a></li>
