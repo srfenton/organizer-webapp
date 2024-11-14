@@ -84,34 +84,44 @@
       color: black;
       text-decoration: none;
     }
+
+    /* Responsive styling for the table */
     @media (max-width: 600px) {
-  table, thead, tbody, th, td, tr {
-    display: block;
-  }
-  th {
-    display: none; /* Hide table headers */
-  }
-  td {
-    display: block;
-    text-align: right; /* Optional */
-    padding-left: 50%;
-    position: relative;
-  }
-  td::before {
-    content: attr(data-label); /* Add data-label to display headers */
-    position: absolute;
-    left: 0;
-    width: 50%;
-    padding-left: 10px;
-    font-weight: bold;
-    text-align: left;
-  }
-}
+      table, thead, tbody, th, td, tr {
+        display: block;
+      }
+      thead tr {
+        position: absolute;
+        top: -9999px;
+        left: -9999px;
+      }
+      tr {
+        margin: 0 0 1rem 0;
+        border: 1px solid #ccc;
+        padding: 0.5rem;
+      }
+      td {
+        border: none;
+        padding: 0.5rem;
+        position: relative;
+        padding-left: 50%;
+        text-align: left;
+      }
+      td::before {
+        content: attr(data-label);
+        position: absolute;
+        left: 0;
+        width: 45%;
+        padding-left: 10px;
+        font-weight: bold;
+        text-align: left;
+      }
+    }
   </style>
 </head>
 <body>
 
-<h2><h2>Hello {{context['username']}}!<p></h2></h2>
+<h2>Hello {{context['username']}}!<p></h2>
 <br>
 <div class="table-container">
   <table>
