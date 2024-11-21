@@ -108,10 +108,10 @@
 
 <ul class="footer-links">
   <li><a href="/logout">logout</a></li>
-  <li><a href="/completed-list/{{context['user_id']}}?timezone={{context['timezone']}}">completed</a></li>
-  <li><a href="/regenerate/{{context['user_id']}}?timezone={{context['timezone']}}">regenerate list</a></li>
-  <li><a href="/edit-list/{{context['user_id']}}?timezone={{context['timezone']}}">edit list</a></li>
-  <li><a href="/stats/{{context['user_id']}}?timezone={{context['timezone']}}">stats</a></li>
+  <li><a href="/completed-list/{{context['user_id']}}">completed</a></li>
+  <li><a href="/regenerate/{{context['user_id']}}">regenerate list</a></li>
+  <li><a href="/edit-list/{{context['user_id']}}">edit list</a></li>
+  <li><a href="/stats/{{context['user_id']}}">stats</a></li>
 </ul>
 
 </body>
