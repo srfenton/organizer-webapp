@@ -176,7 +176,7 @@ def get_undo_complete_task():
     cursor = connection.cursor()
     cursor.execute("update tasks set completion_status = false where id = ?", (id,))
     connection.commit()
-    redirect(f'/completed-list/{user_id}?timezone={timezone}')
+    redirect(f'/completed-list/{user_id}')
 
 @route("/completed-list/<user_id>")
 def get_complete(user_id):
@@ -243,10 +243,13 @@ def post_remove_item():
     timezone = request.get_cookie('timezone')
     #user_id = request.forms.get("user_id") this will likely be removed since the user_id is stored in the user's browser.
     cursor = connection.cursor()
+    rows = list(cursor.execute('select task from list where id = ?', (id,)))
+    task = rows[0][0]
     cursor.execute("delete from list where id = ?", (id,))
+    cursor.execute("delete from tasks where task = ? and user_id = ?", (task, user_id))
     connection.commit()
     #there needs to be a task here that deletes all the records for the removed task.
-    redirect(f'/edit-list/{user_id}?timezone={timezone}')
+    redirect(f'/edit-list/{user_id}')
 
 @post('/add-task')
 def post_add():
@@ -262,7 +265,7 @@ def post_add():
     cursor = connection.cursor()
     cursor.execute("insert into list (user_id, task) values (?,?)", (user_id, new_task,))
     connection.commit()
-    redirect(f'/edit-list/{user_id}?timezone={timezone}')
+    redirect(f'/edit-list/{user_id}')
 
 
 @get('/stats/<user_id>')
