@@ -227,13 +227,16 @@ def get_edit_list(user_id):
     if not validate_session(session_id, user_id):
         redirect('/')  # Redirect to login page if session is invalid
     cursor = connection.cursor()
-    rows = cursor.execute("select id, user_id, task from list where user_id = ?", (user_id,))
-    rows = list(rows)
+    cursor.execute("select id, user_id, task from list where user_id = ?", (user_id,))
+    rows = cursor.fetchall()
+    if not rows:
+        return template('add_item.tpl')
+    
     rows = [ {'id':row[0], 'user_id':row[1], 'task':row[2]} for row in rows ]
     # timezone = request.query.get('timezone')
     timezone = request.get_cookie('timezone')
     context = {'user_id': user_id, 'timezone' : timezone}
-    return template("edit_list.tpl", name="sf", task_list=rows, context=context)
+    return template("edit_list.tpl", task_list=rows, context=context)
 
 @post('/remove-task')
 def post_remove_item():

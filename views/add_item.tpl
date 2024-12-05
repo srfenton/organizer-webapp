@@ -1,8 +1,8 @@
 <html>
 <body>
 <hr/>
-<form action="/add" method="post">
-  <p>New Item:<input name="description"/></p>
+<form action="/add-task" method="post">
+  <p>New Item:<input name="new_task"/></p>
   <p><button type="submit">Submit</button>
 </form>
 <hr/>
