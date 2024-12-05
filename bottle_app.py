@@ -81,6 +81,10 @@ def get_registration():
 
 @post('/register')
 def post_register():
+    session_id = request.get_cookie("session_id")
+    if not session_id:
+        session_id = random_id()
+        response.set_cookie("session_id", session_id)
     cursor = connection.cursor()
     username = request.forms.get('username')
     #the username should be case insensitive and free of white space
@@ -107,14 +111,15 @@ def post_register():
     user_id= rows[0][0]
     setup_user_list(user_id)
     cursor.execute('insert into sessions (user_id, session_id) values (?,?)', (user_id, session_id))
-    # redirect(f'/list/{user_id}?timezone={timezone}')
+    connection.commit()
+    response.set_cookie("user_id", str(user_id))
     redirect(f'/list/{user_id}')
 
 
 
 @route('/list/<user_id>')
 def get_list(user_id):
-
+    print(user_id)
     session_id = request.get_cookie('session_id')
     # Validate the session before proceeding
     if not validate_session(session_id, user_id):
