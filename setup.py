@@ -35,13 +35,9 @@ def setup_user_list(user_id,connection=None):
         pass
 
 
-    cursor.execute("insert into list (task, user_id) values ('get some sunlight into your eyes', ?)", (user_id,))
     cursor.execute("insert into list (task, user_id) values ('reach out to a friend', ?)", (user_id,))
-    cursor.execute("insert into list (task, user_id) values ('hydrate', ?)", (user_id,))
     cursor.execute("insert into list (task, user_id) values ('go for a walk', ?)", (user_id,))
-    cursor.execute("insert into list (task, user_id) values ('do some light reading', ?)", (user_id,))
-    cursor.execute("insert into list (task, user_id) values ('write your end of day thoughts into a journal before bed so you can get some deep, restful sleep', ?)", (user_id,))
-
+  
     connection.commit()
     print("done.")
 
