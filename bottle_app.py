@@ -59,10 +59,9 @@ def get_login():
             connection.commit()
             print('saving session_id')
 
-
         response.set_cookie("user_id", str(user_id))
-        # redirect(f'/list/{user_id}?timezone={timezone}')
         redirect(f'/list/{user_id}')
+
     else:
         return template('retry')
 
@@ -125,7 +124,6 @@ def get_list(user_id):
     if not validate_session(session_id, user_id):
         redirect('/')  # Redirect to login page if session is invalid
     
-    # timezone = request.query.get('timezone')
     timezone = request.get_cookie('timezone')
     cursor = connection.cursor()
     rows = cursor.execute("select * from list where user_id = ?", (user_id,))
@@ -155,14 +153,12 @@ def get_complete_task():
     if not validate_session(session_id, user_id):
         redirect('/')  # Redirect to login page if session is invalid
     id = request.forms.get('id')
-    # timezone = request.forms.get('timezone')
     timezone = request.get_cookie('timezone')
     user_id = request.forms.get('user_id')
     cursor = connection.cursor()
     cursor.execute("update tasks set completion_status = true where id = ?", (id,))
     connection.commit()
     print('complete action was successful')
-    # redirect(f'/list/{user_id}?timezone={timezone}')
     redirect(f'/list/{user_id}')
 
 
@@ -247,16 +243,13 @@ def post_remove_item():
     if not validate_session(session_id, user_id):
         redirect('/')  # Redirect to login page if session is invalid
     id = request.forms.get("id")
-    # timezone = request.forms.get('timezone')
     timezone = request.get_cookie('timezone')
-    #user_id = request.forms.get("user_id") this will likely be removed since the user_id is stored in the user's browser.
     cursor = connection.cursor()
     rows = list(cursor.execute('select task from list where id = ?', (id,)))
     task = rows[0][0]
     cursor.execute("delete from list where id = ?", (id,))
     cursor.execute("delete from tasks where task = ? and user_id = ?", (task, user_id))
     connection.commit()
-    #there needs to be a task here that deletes all the records for the removed task.
     redirect(f'/edit-list/{user_id}')
 
 @post('/add-task')
@@ -268,8 +261,7 @@ def post_add():
     if not validate_session(session_id, user_id):
         redirect('/')  # Redirect to login page if session is invalid
     new_task = request.forms.get("new_task")
-    #user_id = request.forms.get("user_id")
-    timezone = request.forms.get("timezone")
+    timezone = request.get_cookie("timezone")
     cursor = connection.cursor()
     cursor.execute("insert into list (user_id, task) values (?,?)", (user_id, new_task,))
     connection.commit()
@@ -287,7 +279,6 @@ def get_stats(user_id):
     user_record = list(cursor.execute("select * from users where id = ?", (user_id,)))
     username = user_record[0][1]
     rows = generate_main_table(user_id)
-    # timezone = request.query.get('timezone')
     timezone = request.get_cookie('timezone')
     context = {'user_id': user_id, 'username' : username, 'timezone' : timezone}
     return template("stats.tpl", name=username, stats_list=rows, context=context)
