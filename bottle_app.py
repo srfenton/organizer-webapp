@@ -199,7 +199,8 @@ def get_complete(user_id):
     return template("completed_list.tpl", name="sf", completed_task_list=rows, context=context)
 
 
-
+################################################################################################
+#This route will be deprecated soon. I just want to do some testing first.
 @route('/regenerate/<user_id>')
 def get_regenerate(user_id):
     session_id = request.get_cookie('session_id')
@@ -207,11 +208,11 @@ def get_regenerate(user_id):
     # Validate the session before proceeding
     if not validate_session(session_id, user_id):
         redirect('/')  # Redirect to login page if session is invalid
-    # timezone = request.query.get('timezone')
     timezone = request.get_cookie('timezone')
     generate_tasks(user_id, timezone)
-    # redirect(f'/list/{user_id}?timezone={timezone}')
     redirect(f'/list/{user_id}')
+################################################################################################
+
 
 @route('/edit-list/<user_id>')
 def get_edit_list(user_id):
@@ -265,6 +266,7 @@ def post_add():
     cursor = connection.cursor()
     cursor.execute("insert into list (user_id, task) values (?,?)", (user_id, new_task,))
     connection.commit()
+    generate_tasks(user_id, timezone)
     redirect(f'/edit-list/{user_id}')
 
 

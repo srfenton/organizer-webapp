@@ -97,7 +97,8 @@
 <ul class="footer-links">
   <li><a href="/logout">logout</a></li>
   <li><a href="/list/{{context['user_id']}}">list</a></li>
-  <li><a href="/regenerate/{{context['user_id']}}">regenerate list</a></li>
+  <li><a href="/edit-list/{{context['user_id']}}">edit list</a></li>
+  <!-- <li><a href="/regenerate/{{context['user_id']}}">regenerate list</a></li> -->
   <li><a href="/stats/{{context['user_id']}}">stats</a></li>
   
 </ul>
