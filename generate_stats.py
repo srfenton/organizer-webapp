@@ -173,23 +173,6 @@ def generate_main_table(user_id,connection=None):
         GROUP BY t.task
     ),
 
-    /*two_month AS (
-        SELECT task,
-            CASE
-                -- If the task was assigned before the start of two months ago, count all days in that month
-                WHEN MIN(date_assigned) < DATE('now', 'start of month', '-2 months') 
-                THEN JULIANDAY(DATE('now', 'start of month', '-1 month')) - JULIANDAY(DATE('now', 'start of month', '-2 months')) 
-                
-                -- Otherwise, count days from the first assignment within that month
-                ELSE JULIANDAY(DATE('now', 'start of month', '-1 month')) - JULIANDAY(MIN(date_assigned)) 
-            END AS days_assigned
-            
-        FROM tasks 
-        WHERE user_id = ?
-        AND date_assigned BETWEEN DATE('now', 'start of month', '-2 months') AND DATE('now', 'start of month', '-1 month', '-1 day')
-        GROUP BY task
-    ),*/
-
     two_month as(
     SELECT 
         t.task,
@@ -241,12 +224,13 @@ def generate_main_table(user_id,connection=None):
         printf("%.2f%%", COALESCE(previous_month_completed_tasks.completed_tasks, 0) * 100.0 / COALESCE(previous_month.days_assigned, 1)) AS previous_month_percentage,
         printf("%.2f%%", COALESCE(two_month_completed_tasks.completed_tasks, 0) * 100.0 / COALESCE(two_month.days_assigned, 1)) AS two_month_percentage,
         printf("%.2f%%", COALESCE(total_completed_tasks.completed_tasks, 0) * 100.0 / COALESCE(days_assigned.days_assigned, 1)) AS total_percentage,
-    --    COALESCE(previous_month_completed_tasks.completed_tasks, 0) AS previous_month_complete,
-    --    COALESCE(current_month.days_assigned, 0) AS current_month_days_assigned,
-    --    COALESCE(previous_month.days_assigned, 0) AS previous_month_days_assigned,
-    --    COALESCE(two_month.days_assigned, 0) AS two_month_days_assigned,
-    --    COALESCE(previous_month_completed_tasks.completed_tasks, 0) AS previous_month_complete,
-    --    COALESCE(two_month_completed_tasks.completed_tasks, 0) AS two_month_complete
+        COALESCE(total_completed_tasks.completed_tasks, 0) AS total_complete,
+        COALESCE(previous_month_completed_tasks.completed_tasks, 0) AS previous_month_complete,
+        COALESCE(current_month.days_assigned, 0) AS current_month_days_assigned,
+        COALESCE(previous_month.days_assigned, 0) AS previous_month_days_assigned,
+        COALESCE(two_month.days_assigned, 0) AS two_month_days_assigned,
+        COALESCE(previous_month_completed_tasks.completed_tasks, 0) AS previous_month_complete,
+        COALESCE(two_month_completed_tasks.completed_tasks, 0) AS two_month_complete,
         COALESCE(days_assigned.days_assigned, 0) AS total_days_assigned
         
     FROM 
@@ -255,8 +239,11 @@ def generate_main_table(user_id,connection=None):
     -- Completed tasks for two months back
     LEFT JOIN 
         (SELECT task, COUNT(*) AS completed_tasks 
-        FROM tasks 
-        WHERE user_id = ? AND completion_status = true 
+        FROM tasks t
+        LEFT JOIN vacations v 
+        ON t.date_assigned = v.vacation_date AND v.user_id = t.user_id
+        WHERE t.user_id = ? AND completion_status = true 
+        AND v.vacation_date IS NULL -- Exclude tasks completed on vacation days
         AND date_assigned BETWEEN DATE('now', 'start of month', '-2 months') AND DATE('now', 'start of month', '-1 months','-1 day')
         GROUP BY task) AS two_month_completed_tasks
     ON 
@@ -265,8 +252,11 @@ def generate_main_table(user_id,connection=None):
     -- Completed tasks for previous month
     LEFT JOIN 
         (SELECT task, COUNT(*) AS completed_tasks 
-        FROM tasks 
-        WHERE user_id = ? AND completion_status = true 
+        FROM tasks t
+        LEFT JOIN vacations v 
+        ON t.date_assigned = v.vacation_date AND v.user_id = t.user_id
+        WHERE t.user_id = ? AND completion_status = true 
+        AND v.vacation_date IS NULL -- Exclude tasks completed on vacation days
         AND date_assigned BETWEEN DATE('now', 'start of month', '-1 month') AND DATE('now', 'start of month', '-1 day')
         GROUP BY task) AS previous_month_completed_tasks
     ON 
@@ -275,19 +265,26 @@ def generate_main_table(user_id,connection=None):
     -- Completed tasks for current month
     LEFT JOIN 
         (SELECT task, COUNT(*) AS completed_tasks
-        FROM tasks 
-        WHERE user_id = ? AND completion_status = true 
+        FROM tasks t
+        LEFT JOIN vacations v 
+        ON t.date_assigned = v.vacation_date AND v.user_id = t.user_id
+        WHERE t.user_id = ? AND t.completion_status = true 
+        AND v.vacation_date IS NULL -- Exclude tasks completed on vacation days
         AND date_assigned BETWEEN DATE('now', 'start of month') AND DATE('now')
-        GROUP BY task) AS current_month_completed_tasks
+        GROUP BY t.task) AS current_month_completed_tasks
     ON 
         l.task = current_month_completed_tasks.task    
         
     -- Total completed tasks
     LEFT JOIN 
-        (SELECT task, COUNT(*) AS completed_tasks 
-        FROM tasks 
-        WHERE user_id = ? AND completion_status = true 
-        GROUP BY task) AS total_completed_tasks
+        (SELECT t.task, COUNT(*) AS completed_tasks 
+        FROM tasks t
+        LEFT JOIN vacations v 
+        ON t.date_assigned = v.vacation_date AND v.user_id = t.user_id
+        WHERE t.user_id = ? 
+        AND t.completion_status = true 
+        AND v.vacation_date IS NULL -- Exclude tasks completed on vacation days
+        GROUP BY t.task) AS total_completed_tasks
     ON 
         l.task = total_completed_tasks.task
         
@@ -319,6 +316,7 @@ def generate_main_table(user_id,connection=None):
         WHERE t.user_id = ?
         GROUP BY t.task) AS days_assigned
     ON l.task = days_assigned.task
+
 
     
 
