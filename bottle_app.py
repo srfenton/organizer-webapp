@@ -6,6 +6,7 @@ from datetime import datetime
 from session_manager import random_id, validate_session
 import sqlite3
 import pytz
+import calendar
 
 
 connection = sqlite3.connect("daily_list.db")
@@ -282,7 +283,10 @@ def get_stats(user_id):
     username = user_record[0][1]
     rows = generate_main_table(user_id)
     timezone = request.get_cookie('timezone')
-    context = {'user_id': user_id, 'username' : username, 'timezone' : timezone}
+    current_month = datetime.now().month
+    two_months_ago = (current_month - 2) % 12  # Ensure it wraps around from January
+    two_months_string = calendar.month_name[two_months_ago]  # Get month name
+    context = {'user_id': user_id, 'username' : username, 'timezone' : timezone, 'two_months_string' : two_months_string}
     return template("stats.tpl", name=username, stats_list=rows, context=context)
 
 
