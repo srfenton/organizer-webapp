@@ -115,14 +115,14 @@ def generate_main_table(user_id,connection=None):
         printf("%.2f%%", COALESCE(current_month_completed_tasks.completed_tasks, 0) * 100.0 / COALESCE(current_month.days_assigned, 1)) AS current_month_percentage,
         printf("%.2f%%", COALESCE(previous_month_completed_tasks.completed_tasks, 0) * 100.0 / COALESCE(previous_month.days_assigned, 1)) AS previous_month_percentage,
         printf("%.2f%%", COALESCE(two_month_completed_tasks.completed_tasks, 0) * 100.0 / COALESCE(two_month.days_assigned, 1)) AS two_month_percentage,
-        printf("%.2f%%", COALESCE(total_completed_tasks.completed_tasks, 0) * 100.0 / COALESCE(days_assigned.days_assigned, 1)) AS total_percentage,
-        COALESCE(total_completed_tasks.completed_tasks, 0) AS total_complete,
-        COALESCE(previous_month_completed_tasks.completed_tasks, 0) AS previous_month_complete,
-        COALESCE(current_month.days_assigned, 0) AS current_month_days_assigned,
-        COALESCE(previous_month.days_assigned, 0) AS previous_month_days_assigned,
-        COALESCE(two_month.days_assigned, 0) AS two_month_days_assigned,
-        COALESCE(previous_month_completed_tasks.completed_tasks, 0) AS previous_month_complete,
-        COALESCE(two_month_completed_tasks.completed_tasks, 0) AS two_month_complete,
+        --printf("%.2f%%", COALESCE(total_completed_tasks.completed_tasks, 0) * 100.0 / COALESCE(days_assigned.days_assigned, 1)) AS total_percentage,
+        --COALESCE(total_completed_tasks.completed_tasks, 0) AS total_complete,
+        --COALESCE(previous_month_completed_tasks.completed_tasks, 0) AS previous_month_complete,
+        --COALESCE(current_month.days_assigned, 0) AS current_month_days_assigned,
+        --COALESCE(previous_month.days_assigned, 0) AS previous_month_days_assigned,
+        --COALESCE(two_month.days_assigned, 0) AS two_month_days_assigned,
+        --COALESCE(previous_month_completed_tasks.completed_tasks, 0) AS previous_month_complete,
+        --COALESCE(two_month_completed_tasks.completed_tasks, 0) AS two_month_complete,
         COALESCE(days_assigned.days_assigned, 0) AS total_days_assigned
         
     FROM 
