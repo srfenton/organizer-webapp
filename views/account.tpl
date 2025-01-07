@@ -8,7 +8,9 @@
 
   <style>
 
-
+    p {
+      color: black;
+    }
     a, a:visited {
       color: black;
       text-decoration: none;
@@ -88,27 +90,11 @@
 
 <h2>Hello {{context['username']}}!<p></h2>
 <br>
-<table>
-  % for item in uncompleted_task_list:
-    <tr>
-      <td>{{str(item['task'])}}</td>
-      <td>
-        <form action="/complete" method="post">
-        <input name="user_id" type="hidden" value="{{ str(item['user_id']) }}"/>
-        <input name="id" type="hidden" value="{{ str(item['id']) }}"/>
-        <input name="timezone" type="hidden" value="{{context['timezone']}}"/>
-        <input name="username" type="hidden" value="{{context['username']}}"/>
-        <button class="button button2" type="submit">complete</button>
-      </form>
-      </td>
-    </tr>
-
-  % end
-</table>
+<p><a href="/account/vacation/{{context['user_id']}}">vacation</a></p>
+<p><a href="/">change password</a></p>
 
 <ul class="footer-links">
   <li><a href="/logout">logout</a></li>
-  <li><a href="/account/{{context['user_id']}}">account</a></li>
   <li><a href="/completed-list/{{context['user_id']}}">completed</a></li>
   <li><a href="/edit-list/{{context['user_id']}}">edit list</a></li>
   <li><a href="/stats/{{context['user_id']}}">stats</a></li>

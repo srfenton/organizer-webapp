@@ -173,7 +173,6 @@ def get_undo_complete_task():
         redirect('/')  # Redirect to login page if session is invalid
     id = request.forms.get('id')
     user_id = request.forms.get('user_id')
-    # timezone = request.forms.get('timezone')
     timezone = request.get_cookie('timezone')
     cursor = connection.cursor()
     cursor.execute("update tasks set completion_status = false where id = ?", (id,))
@@ -190,7 +189,6 @@ def get_complete(user_id):
     cursor = connection.cursor()
     user_record = list(cursor.execute("select * from users where id = ?", (user_id,)))
     username = user_record[0][1]
-    # timezone = request.query.get('timezone')
     timezone = request.get_cookie('timezone')
     date = datetime.now(tz=pytz.timezone(timezone)).strftime("%Y-%m-%d")
     rows = cursor.execute("select id, user_id, task, date_assigned, completion_status from tasks where user_id = ? and completion_status = true and date_assigned = ?", (user_id, date))
@@ -198,21 +196,6 @@ def get_complete(user_id):
     rows = [ {'id':row[0], 'user_id':row[1], 'task':row[2], 'date_assigned':row[3], 'completion_status':row[4]} for row in rows ]
     context = {'user_id': user_id, 'username' : username, 'timezone' : timezone}
     return template("completed_list.tpl", name="sf", completed_task_list=rows, context=context)
-
-
-################################################################################################
-#This route will be deprecated soon. I just want to do some testing first.
-@route('/regenerate/<user_id>')
-def get_regenerate(user_id):
-    session_id = request.get_cookie('session_id')
-    user_id = request.get_cookie('user_id')
-    # Validate the session before proceeding
-    if not validate_session(session_id, user_id):
-        redirect('/')  # Redirect to login page if session is invalid
-    timezone = request.get_cookie('timezone')
-    generate_tasks(user_id, timezone)
-    redirect(f'/list/{user_id}')
-################################################################################################
 
 
 @route('/edit-list/<user_id>')
@@ -231,7 +214,6 @@ def get_edit_list(user_id):
         return template('add_item.tpl')
     
     rows = [ {'id':row[0], 'user_id':row[1], 'task':row[2]} for row in rows ]
-    # timezone = request.query.get('timezone')
     timezone = request.get_cookie('timezone')
     context = {'user_id': user_id, 'timezone' : timezone}
     return template("edit_list.tpl", task_list=rows, context=context)
@@ -289,8 +271,65 @@ def get_stats(user_id):
     context = {'user_id': user_id, 'username' : username, 'timezone' : timezone, 'two_months_string' : two_months_string}
     return template("stats.tpl", name=username, stats_list=rows, context=context)
 
+#####################################################################################################################
+#UNDER CONSTRUCTION
+#####################################################################################################################
 
+@route("/account/<user_id>")
+def get_account(user_id):
+    session_id = request.get_cookie('session_id') 
 
+    # Validate the session before proceeding
+    if not validate_session(session_id, user_id):
+        redirect('/')  # Redirect to login page if session is invalid
+    cursor = connection.cursor()
+    user_record = list(cursor.execute("select * from users where id = ?", (user_id,)))
+    username = user_record[0][1]
+    timezone = request.get_cookie('timezone')
+    date = datetime.now(tz=pytz.timezone(timezone)).strftime("%Y-%m-%d")
+    rows = cursor.execute("select id, user_id, task, date_assigned, completion_status from tasks where user_id = ? and completion_status = true and date_assigned = ?", (user_id, date))
+    rows = list(rows)
+    rows = [ {'id':row[0], 'user_id':row[1], 'task':row[2], 'date_assigned':row[3], 'completion_status':row[4]} for row in rows ]
+    context = {'user_id': user_id, 'username' : username, 'timezone' : timezone}
+    return template("account.tpl", completed_task_list=rows, context=context)
+
+@route("/account/vacation/<user_id>")
+def get_vacations(user_id):
+    session_id = request.get_cookie('session_id') 
+
+    # Validate the session before proceeding
+    if not validate_session(session_id, user_id):
+        redirect('/')  # Redirect to login page if session is invalid
+    cursor = connection.cursor()
+    user_record = list(cursor.execute("select * from users where id = ?", (user_id,)))
+    username = user_record[0][1]
+    timezone = request.get_cookie('timezone')
+    date = datetime.now(tz=pytz.timezone(timezone)).strftime("%Y-%m-%d")
+    rows = cursor.execute("select id, user_id, vacation_date from vacations where user_id = ?", (user_id,))
+    rows = list(rows)
+    rows = [ {'id':row[0], 'user_id':row[1], 'vacation_date':row[2]} for row in rows ]
+    context = {'user_id': user_id, 'username' : username, 'timezone' : timezone}
+    return template("vacations.tpl", vacation_days_list=rows, context=context)
+
+@route('/delete-vacation', method='POST')
+def get_undo_complete_task():
+    session_id = request.get_cookie('session_id')
+    user_id = request.get_cookie('user_id')
+    
+    # Validate the session before proceeding
+    if not validate_session(session_id, user_id):
+        redirect('/')  # Redirect to login page if session is invalid
+    id = request.forms.get('id')
+    user_id = request.forms.get('user_id')
+    timezone = request.get_cookie('timezone')
+    cursor = connection.cursor()
+    cursor.execute("delete from vacations where where id = ?", (id,))
+    connection.commit()
+    redirect(f'/account/vacations/{user_id}')
+
+#####################################################################################################################
+#UNDER CONSTRUCTION
+#####################################################################################################################
 
 #application = default_app()
 run(host='localhost', port=8080, application=Bottle(), debug=True, reloader=True)

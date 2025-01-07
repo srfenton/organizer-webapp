@@ -152,6 +152,7 @@
 
 <ul class="footer-links">
   <li><a href="/list/{{context['user_id']}}">list</a></li>
+  <li><a href="/account/{{context['user_id']}}">account</a></li>
   <li><a href="/completed-list/{{context['user_id']}}">completed</a></li>
   <li><a href="/edit-list/{{context['user_id']}}">edit list</a></li>
   <li><a href="/logout">logout</a></li>
