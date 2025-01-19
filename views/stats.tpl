@@ -129,7 +129,8 @@
       <tr>
         <th>Task</th>
         <th>Current Month</th>
-        <th>Previous Month</th>
+        <!-- <th>One month</th> -->
+        <th>{{context['one_month_string']}}</th> 
         <th>{{context['two_months_string']}}</th>
         <th>Total Percentage</th>
         <th>Days Assigned</th>
@@ -140,7 +141,7 @@
       <tr>
         <td data-label="Task">{{str(item['task'])}}</td>
         <td data-label="Current Month">{{str(item['current month'])}}</td>
-        <td data-label="Previous Month">{{str(item['previous month'])}}</td>
+        <td data-label="{{context['one_month_string']}}">{{str(item['previous month'])}}</td>
         <td data-label="{{context['two_months_string']}}">{{str(item['two months'])}}</td>
         <td data-label="Total Percentage">{{str(item['total percentage'])}}</td>
         <td data-label="Days Assigned">{{str(item['days assigned count'])}}</td>
@@ -152,6 +153,7 @@
 
 <ul class="footer-links">
   <li><a href="/list/{{context['user_id']}}">list</a></li>
+  <li><a href="/account/{{context['user_id']}}">account</a></li>
   <li><a href="/completed-list/{{context['user_id']}}">completed</a></li>
   <li><a href="/edit-list/{{context['user_id']}}">edit list</a></li>
   <li><a href="/logout">logout</a></li>

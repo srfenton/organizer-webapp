@@ -71,21 +71,34 @@
   background-color: transparent;
 }
 
+div {
+ text-align: center; 
+ padding: 60px;
+}
+
   </style>
 </head>
 <body>
-<h2>Completed Task List</h2>
+<h2>Vacations</h2>
+
+<div id = "add-vacation">
+  <form action="/add-vacation" method="post">
+       <input type="date" placeholder="date" name="date" required>
+       <input name="user_id" type="hidden" value="{{context['user_id']}}"/>
+       <button class="button" type="submit">add</button>
+      </form>
+</div>
 
 <table>
-% for item in completed_task_list:
+% for item in vacation_days_list:
   <tr>
-    <td>{{str(item['task'])}}</td>
+    <td>{{str(item['vacation_date'])}}</td>
     <td>
-      <form action="/undo-complete" method="post">
+      <form action="/delete-vacation" method="post">
         <input name="user_id" type="hidden" value="{{str(item['user_id'])}}"/>
         <input name="id" type="hidden" value="{{str(item['id'])}}"/>
         <input name="timezone" type="hidden" value="{{context['timezone']}}"/>
-        <button class="button" type="submit">undo</button>
+        <button class="button" type="submit">delete</button>
       </form>
 
     </td>
@@ -99,6 +112,7 @@
   <li><a href="/account/{{context['user_id']}}">account</a></li>
   <li><a href="/list/{{context['user_id']}}">list</a></li>
   <li><a href="/edit-list/{{context['user_id']}}">edit list</a></li>
+  <!-- <li><a href="/regenerate/{{context['user_id']}}">regenerate list</a></li> -->
   <li><a href="/stats/{{context['user_id']}}">stats</a></li>
   
 </ul>
