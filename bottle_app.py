@@ -266,9 +266,12 @@ def get_stats(user_id):
     rows = generate_main_table(user_id)
     timezone = request.get_cookie('timezone')
     current_month = datetime.now().month
-    two_months_ago = (current_month - 2) % 12  # Ensure it wraps around from January
+    one_month_ago = (current_month - 2) % 12 + 1  # Wraps around to December if needed
+    two_months_ago = (current_month - 3) % 12 + 1  # Wraps around to November if needed
+    one_month_string = calendar.month_name[one_month_ago]  # Get month name
     two_months_string = calendar.month_name[two_months_ago]  # Get month name
-    context = {'user_id': user_id, 'username' : username, 'timezone' : timezone, 'two_months_string' : two_months_string}
+    print(f'{one_month_string} IS ONE MONTH')
+    context = {'user_id': user_id, 'username' : username, 'timezone' : timezone, 'one_month_string' : one_month_string,'two_months_string' : two_months_string}
     return template("stats.tpl", name=username, stats_list=rows, context=context)
 
 #####################################################################################################################
@@ -293,7 +296,7 @@ def get_account(user_id):
     context = {'user_id': user_id, 'username' : username, 'timezone' : timezone}
     return template("account.tpl", completed_task_list=rows, context=context)
 
-@route("/account/vacation/<user_id>")
+@route("/account/vacations/<user_id>")
 def get_vacations(user_id):
     session_id = request.get_cookie('session_id') 
 
@@ -305,14 +308,14 @@ def get_vacations(user_id):
     username = user_record[0][1]
     timezone = request.get_cookie('timezone')
     date = datetime.now(tz=pytz.timezone(timezone)).strftime("%Y-%m-%d")
-    rows = cursor.execute("select id, user_id, vacation_date from vacations where user_id = ?", (user_id,))
+    rows = cursor.execute("select id, user_id, vacation_date from vacations where user_id = ? order by vacation_date desc", (user_id,))
     rows = list(rows)
     rows = [ {'id':row[0], 'user_id':row[1], 'vacation_date':row[2]} for row in rows ]
     context = {'user_id': user_id, 'username' : username, 'timezone' : timezone}
     return template("vacations.tpl", vacation_days_list=rows, context=context)
 
 @route('/delete-vacation', method='POST')
-def get_undo_complete_task():
+def post_delete_vacation():
     session_id = request.get_cookie('session_id')
     user_id = request.get_cookie('user_id')
     
@@ -323,7 +326,24 @@ def get_undo_complete_task():
     user_id = request.forms.get('user_id')
     timezone = request.get_cookie('timezone')
     cursor = connection.cursor()
-    cursor.execute("delete from vacations where where id = ?", (id,))
+    cursor.execute("delete from vacations where id = ?", (id,))
+    connection.commit()
+    redirect(f'/account/vacations/{user_id}')
+
+@route('/add-vacation', method='POST')
+def post_add_vacation():
+    session_id = request.get_cookie('session_id')
+    user_id = request.get_cookie('user_id')
+    
+    # Validate the session before proceeding
+    if not validate_session(session_id, user_id):
+        redirect('/')  # Redirect to login page if session is invalid
+    # id = request.forms.get('id')
+    date = request.forms.get('date')
+    user_id = request.forms.get('user_id')
+    timezone = request.get_cookie('timezone')
+    cursor = connection.cursor()
+    cursor.execute("insert into vacations(user_id, vacation_date) values(?,?) ", (user_id, date))
     connection.commit()
     redirect(f'/account/vacations/{user_id}')
 

@@ -71,10 +71,23 @@
   background-color: transparent;
 }
 
+div {
+ text-align: center; 
+ padding: 60px;
+}
+
   </style>
 </head>
 <body>
 <h2>Vacations</h2>
+
+<div id = "add-vacation">
+  <form action="/add-vacation" method="post">
+       <input type="date" placeholder="date" name="date" required>
+       <input name="user_id" type="hidden" value="{{context['user_id']}}"/>
+       <button class="button" type="submit">add</button>
+      </form>
+</div>
 
 <table>
 % for item in vacation_days_list:

@@ -11,10 +11,11 @@
     p {
       color: black;
     }
-    a, a:visited {
+    a {
       color: black;
       text-decoration: none;
     }
+
 
     body {
       padding-top: 45px;
@@ -50,7 +51,7 @@
       margin: 0 auto 45px;
     }
 
-    .button_text a, a:visited{
+    .button_text {
     color: white
     }
 
@@ -88,10 +89,10 @@
 </head>
 <body>
 
-<h2>Hello {{context['username']}}!<p></h2>
+<h2>{{context['username']}}'s account settings<p></h2>
 <br>
-<p><a href="/account/vacation/{{context['user_id']}}">vacation</a></p>
-<p><a href="/">change password</a></p>
+<p><a href="/account/vacations/{{context['user_id']}}">vacations</a></p>
+<!-- <p><a href="/">change password</a></p> -->
 
 <ul class="footer-links">
   <li><a href="/logout">logout</a></li>
