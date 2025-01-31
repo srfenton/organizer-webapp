@@ -23,6 +23,10 @@
       margin: 0 auto 45px;
     }
 
+    body {
+      text-align: center;
+    }
+
     tr, td {
       border-collapse: collapse;
       font-family: 'Nunito Sans';
@@ -94,6 +98,13 @@
 % end
 </table>
 
+<label for="date">select a date:</label>
+
+<select name="date" id="date">
+  <option value="today">today</option>
+  <option value="yesterday">yesterday</option>
+</select> 
+
 <ul class="footer-links">
   <li><a href="/logout">logout</a></li>
   <li><a href="/account/{{context['user_id']}}">account</a></li>
@@ -102,6 +113,27 @@
   <li><a href="/stats/{{context['user_id']}}">stats</a></li>
   
 </ul>
+<script>
+  const dateSelect = document.getElementById('date');
+
+  // Dynamically set the dropdown to match the current query parameter on page load
+  const params = new URLSearchParams(window.location.search);
+  const currentDate = params.get('date') || 'today'; // Default to 'today' if no parameter is present
+  dateSelect.value = currentDate;
+
+  dateSelect.addEventListener('change', () => {
+    const selectedDate = dateSelect.value; // Get the selected date
+    const userId = "{{context['user_id']}}"; // Insert user ID dynamically
+
+    // Redirect to the appropriate URL based on the selected date
+    if (selectedDate === "yesterday") {
+      window.location.href = `/completed-list/${userId}?date=yesterday`;
+    } else {
+      window.location.href = `/completed-list/${userId}?date=today`;
+    }
+  });
+</script>
+
 
 </body>
 </html>
