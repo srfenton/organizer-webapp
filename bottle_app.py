@@ -2,7 +2,7 @@ from bottle import Bottle, default_app, route, get, post, response, request, red
 from setup import setup_user_list, generate_tasks
 from password_manager import generate_password_hash, verify_password_hash, is_valid_password
 from generate_stats import generate_main_table
-from datetime import datetime
+from datetime import datetime, date, timedelta
 from session_manager import random_id, validate_session
 import sqlite3
 import pytz
@@ -131,7 +131,14 @@ def get_list(user_id):
     rows = list(rows)
     user_record = list(cursor.execute("select * from users where id = ?", (user_id,)))
     username = user_record[0][1]
-    date = datetime.now(tz=pytz.timezone(timezone)).strftime("%Y-%m-%d")
+    
+    selected_date = request.query.get('date', 'today')
+    if selected_date == 'yesterday':
+        yesterday = datetime.now(tz=pytz.timezone(timezone)) - timedelta(days = 1)
+        date = yesterday.strftime("%Y-%m-%d") 
+    else:
+        date = datetime.now(tz=pytz.timezone(timezone)).strftime("%Y-%m-%d")
+    
     prev_tasks_date = list(cursor.execute("select max(date_assigned) from tasks where user_id = ?", (user_id,)))
     prev_tasks_date = prev_tasks_date[0][0]
     if prev_tasks_date is None:
@@ -141,7 +148,8 @@ def get_list(user_id):
     rows = cursor.execute("select id, user_id, task, date_assigned, completion_status from tasks where user_id = ? and completion_status = false and date_assigned = ?", (user_id, date))
     rows = list(rows)
     rows = [ {'id':row[0] , 'user_id':row[1], 'task':row[2], 'date_assigned':row[3], 'completion_status':row[4]} for row in rows ]
-    context = {'user_id': user_id, 'username' : username, 'timezone' : timezone}
+    context = {'user_id': user_id, 'username' : username, 'timezone' : timezone, 'date' : date }
+
     return template("daily_list.tpl", name=username, uncompleted_task_list=rows, context=context, timezone=timezone)
 
 
@@ -190,11 +198,17 @@ def get_complete(user_id):
     user_record = list(cursor.execute("select * from users where id = ?", (user_id,)))
     username = user_record[0][1]
     timezone = request.get_cookie('timezone')
-    date = datetime.now(tz=pytz.timezone(timezone)).strftime("%Y-%m-%d")
+    selected_date = request.query.get('date', 'today')
+    if selected_date == 'yesterday':
+        yesterday = datetime.now(tz=pytz.timezone(timezone)) - timedelta(days = 1)
+        date = yesterday.strftime("%Y-%m-%d") 
+    else:
+        date = datetime.now(tz=pytz.timezone(timezone)).strftime("%Y-%m-%d")
     rows = cursor.execute("select id, user_id, task, date_assigned, completion_status from tasks where user_id = ? and completion_status = true and date_assigned = ?", (user_id, date))
     rows = list(rows)
     rows = [ {'id':row[0], 'user_id':row[1], 'task':row[2], 'date_assigned':row[3], 'completion_status':row[4]} for row in rows ]
     context = {'user_id': user_id, 'username' : username, 'timezone' : timezone}
+
     return template("completed_list.tpl", name="sf", completed_task_list=rows, context=context)
 
 
