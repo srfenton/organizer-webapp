@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <link rel="manifest" href="/manifest.json">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link href='https://fonts.googleapis.com/css?family=Nunito Sans' rel='stylesheet'>
@@ -117,14 +117,112 @@
         text-align: left;
       }
     }
+    canvas {
+        margin: 0 auto 45px;
+        width: 100%;
+        max-width: 800px;
+        border-collapse: collapse;
+    }
+
   </style>
 </head>
+
+<script>
+
+document.addEventListener("DOMContentLoaded", function() {
+    let table = document.getElementById("data-table");
+    let taskDropdown = document.getElementById("viewedTask");
+    let chartInstance = null;  // Store chart instance for updating
+
+    function createChart(selectedTask) {
+        let labels = [
+            document.querySelector("th:nth-child(4)").innerText,  // Two months ago
+            document.querySelector("th:nth-child(3)").innerText,   // One month ago
+            "Current Month"
+        ];
+        let taskData = [];
+
+        // Find the row corresponding to the selected task
+        for (let i = 1; i < table.rows.length; i++) {
+            let taskName = table.rows[i].cells[0].innerText.trim();
+            if (taskName === selectedTask) {
+                taskData = [
+                    parseFloat(table.rows[i].cells[3].innerText), // Two Months Ago
+                    parseFloat(table.rows[i].cells[2].innerText), // One Month Ago
+                    parseFloat(table.rows[i].cells[1].innerText)  // Current Month
+                ];
+                break;
+            }
+        }
+
+        let chartData = {
+            labels: labels,
+            datasets: [{
+                label: selectedTask,
+                data: taskData,
+                borderColor: getRandomColor(),
+                fill: false
+            }]
+        };
+
+        // Destroy previous chart instance if it exists
+        if (chartInstance) {
+            chartInstance.destroy();
+        }
+
+        // Create new line chart
+        let ctx = document.getElementById("lineChart").getContext("2d");
+        chartInstance = new Chart(ctx, {
+            type: "line",
+            data: chartData,
+            options: {
+                responsive: true,
+                scales: {
+                    y: {
+                        beginAtZero: false,
+                        ticks: {
+                            callback: function(value) {
+                                return value + "%"; // Display percentages
+                            }
+                        }
+                    }
+                }
+            }
+        });
+    }
+
+    // Function to generate random colors
+    function getRandomColor() {
+        return `hsl(${Math.floor(Math.random() * 360)}, 70%, 50%)`;
+    }
+
+    // Event listener for task selection change
+    taskDropdown.addEventListener("change", function() {
+        createChart(taskDropdown.value.trim());
+    });
+
+    // Initialize with first task
+    if (taskDropdown.options.length > 0) {
+        createChart(taskDropdown.options[0].text.trim());
+    }
+});
+
+
+</script>
+
 <body>
 
 <h2>Hello {{context['username']}}!<p></h2>
 <br>
+
+<canvas id="lineChart"></canvas>
+<select id ="viewedTask"> 
+% for item in stats_list:
+<option>{{str(item['task'])}} </option>
+% end
+</select> <br/> <br/>
 <div class="table-container">
-  <table>
+  <table id="data-table">
     <thead>
       <tr>
         <th>Task</th>
