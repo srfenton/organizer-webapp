@@ -24,6 +24,10 @@ def get_index():
 def get_tz():
     return template('timezone.tpl')    
 
+@route('/graphs')
+def get_graphs():
+    return template('graphs.tpl')    
+
 
 @post('/login')
 def get_login():
